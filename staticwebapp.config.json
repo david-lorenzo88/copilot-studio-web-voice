@@ -1,0 +1,4 @@
+{
+  "platform": { "apiRuntime": "node:20" },
+  "globalHeaders": { "Permissions-Policy": "microphone=(self)" }
+}

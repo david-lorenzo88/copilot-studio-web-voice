@@ -1,0 +1,12 @@
+/* Deliberately plain. The lab is about the plumbing, not the page. */
+body { font-family: "Segoe UI", system-ui, sans-serif; max-width: 720px; margin: 32px auto; padding: 0 16px; color: #16202E; background: #EEF3F9; }
+#status { font-size: 12px; color: #5A6675; }
+#chat { display: flex; flex-direction: column; gap: 8px; min-height: 300px; margin: 12px 0; }
+#chat div { padding: 8px 12px; border-radius: 10px; max-width: 85%; white-space: pre-wrap; }
+#chat .you { align-self: flex-end; background: #09376E; color: #fff; }
+#chat .agent { align-self: flex-start; background: #fff; border: 1px solid #D6E1EE; }
+#chat .error { align-self: center; background: #FFF4E2; color: #9A6408; }
+#compose { display: flex; gap: 8px; }
+#compose input { flex: 1; padding: 10px; border: 1px solid #D6E1EE; border-radius: 8px; }
+#compose button { padding: 10px 16px; border: 0; border-radius: 8px; background: #2A6FA8; color: #fff; cursor: pointer; }
+#compose #mic { background: #FFBD59; color: #09376E; font-weight: 700; }

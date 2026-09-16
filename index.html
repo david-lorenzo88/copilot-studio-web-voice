@@ -1,0 +1,22 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>Amber Line - web desk</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <p id="status">connecting...</p>
+  <div id="chat"></div>
+  <form id="compose">
+    <input id="text" autocomplete="off" placeholder="Type, or press the mic">
+    <button>Send</button>
+    <button type="button" id="mic">Mic</button>
+  </form>
+
+  <!-- both SDKs attach a global: DirectLine and SpeechSDK -->
+  <script src="vendor/directline.js"></script>
+  <script src="vendor/speech.js"></script>
+  <script type="module" src="app.js"></script>
+</body>
+</html>

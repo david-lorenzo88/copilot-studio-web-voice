@@ -1,0 +1,13 @@
+{
+  "name": "copilot-studio-web-voice",
+  "private": true,
+  "description": "Baltic Summit 2026 · Lab 6 — a Copilot Studio agent on your own web page, with voice.",
+  "scripts": {
+    "postinstall": "node scripts/copy-vendor.mjs",
+    "start": "swa start . --api-location api"
+  },
+  "devDependencies": {
+    "botframework-directlinejs": "0.16.0",
+    "microsoft-cognitiveservices-speech-sdk": "1.51.0"
+  }
+}
