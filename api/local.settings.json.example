@@ -1,0 +1,9 @@
+{
+  "IsEncrypted": false,
+  "Values": {
+    "FUNCTIONS_WORKER_RUNTIME": "node",
+    "DIRECTLINE_SECRET": "<Secret 1 from Web channel security>",
+    "SPEECH_KEY": "<your Speech key>",
+    "SPEECH_REGION": "swedencentral"
+  }
+}
