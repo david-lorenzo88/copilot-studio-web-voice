@@ -1,0 +1,9 @@
+{
+  "name": "web-voice-tests",
+  "private": true,
+  "description": "Maintainer tests. Kept out of the root install so `npm install` stays small for attendees.",
+  "dependencies": {
+    "playwright": "^1.56.0",
+    "ws": "^8.18.0"
+  }
+}

@@ -15,34 +15,64 @@ function bubble(who, text) {
   chat.appendChild(d);
 }
 
-// 1. a short-lived token from YOUR server - never the secret
-const { token } = await (await fetch("/api/directline/token",
-                                     { method: "POST" })).json();
+// 1. a short-lived token from YOUR server - never the secret.
+//    Each failure names the setting to look at. An exception thrown out
+//    here would stop the whole module and leave a page that still says
+//    "connecting..." and does nothing at all - no mic, no text box.
+async function directLineToken() {
+  let r;
+  try {
+    r = await fetch("/api/directline/token", { method: "POST" });
+  } catch {
+    throw new Error("/api is not answering - is `npm start` still running?");
+  }
+  if (r.status === 404) {
+    throw new Error("/api/directline/token is 404 - start it with `swa start . --api-location api`");
+  }
+  if (!r.ok) {
+    throw new Error(`/api/directline/token returned ${r.status} - check DIRECTLINE_SECRET in api/local.settings.json`);
+  }
+  const body = await r.json().catch(() => ({}));
+  if (!body.token) {
+    throw new Error("/api/directline/token returned no token - check api/local.settings.json");
+  }
+  return body.token;
+}
 
 // 2. the SDK opens the conversation (WebSocket by default)
 //    NOTE: the bundle exposes a namespace, so it is DirectLine.DirectLine
-const dl = new DirectLine.DirectLine({ token });
+let dl = null;
+try {
+  dl = new DirectLine.DirectLine({ token: await directLineToken() });
+} catch (err) {
+  statusEl.textContent = "not connected";
+  bubble("error", err.message);
+  console.error(err);
+}
 
-// 3. connection state: 0 uninitialised ... 2 online ... 5 ended
-const STATES = ["uninitialised", "connecting", "online",
-                "token expired", "failed to connect", "ended"];
-dl.connectionStatus$.subscribe(s => { statusEl.textContent = STATES[s]; });
+if (dl) {
+  // 3. connection state: 0 uninitialised ... 2 online ... 5 ended
+  const STATES = ["uninitialised", "connecting", "online",
+                  "token expired", "failed to connect", "ended"];
+  dl.connectionStatus$.subscribe(s => { statusEl.textContent = STATES[s]; });
 
-// 4. every activity arrives here - including your own messages
-dl.activity$.subscribe(
-  a => {
-    if (a.from.id === USER.id) return;               // your echo
-    if (a.type === "message" && a.text) onAgentReply(a.text);
-  },
-  err => bubble("error", `connection: ${err.message || err}`)
-);
+  // 4. every activity arrives here - including your own messages
+  dl.activity$.subscribe(
+    a => {
+      if (a.from.id === USER.id) return;               // your echo
+      if (a.type === "message" && a.text) onAgentReply(a.text);
+    },
+    err => bubble("error", `connection: ${err.message || err}`)
+  );
 
-// 5. ask Copilot Studio to run its greeting topic
-dl.postActivity({ from: USER, type: "event", name: "startConversation" })
-  .subscribe({ error: e => console.warn("greeting failed", e) });
+  // 5. ask Copilot Studio to run its greeting topic
+  dl.postActivity({ from: USER, type: "event", name: "startConversation" })
+    .subscribe({ error: e => console.warn("greeting failed", e) });
+}
 
 // 6. send what the user typed
 function send(text) {
+  if (!dl) { bubble("error", "not connected - fix the token route and reload"); return; }
   bubble("you", text);
   dl.postActivity({ from: USER, type: "message", text })
     .subscribe({ error: e => bubble("error", e.message) });
@@ -60,8 +90,13 @@ let speechToken = "", speechRegion = "", speechExpiry = 0;
 
 async function speechConfig() {
   if (Date.now() > speechExpiry) {            // tokens last 10 minutes
-    const r = await (await fetch("/api/speech/token",
-                                 { method: "POST" })).json();
+    const res = await fetch("/api/speech/token", { method: "POST" });
+    const r = res.ok ? await res.json().catch(() => ({})) : {};
+    if (!r.token) {
+      const e = new Error(`/api/speech/token returned ${res.status} - check SPEECH_KEY and SPEECH_REGION in api/local.settings.json`);
+      e.setup = true;        // a settings problem, not a failed utterance
+      throw e;
+    }
     speechToken = r.token;
     speechRegion = r.region;
     speechExpiry = Date.now() + r.expires_in * 1000;
@@ -139,6 +174,7 @@ function speakable(raw, lang = "en-US") {
     .replace(/\[([^\]]+)\]\([^)]+\)/g, "$1")     // links -> their label
     .replace(/https?:\/\/\S+/g, "")              // bare URLs
     .replace(/^\s*\|.*\|\s*$/gm, "")             // table rows
+    .replace(/\|/g, " ")                         // a pipe left inline with prose
     .replace(/[*_`#>]+/g, "")                    // markdown symbols
     .replace(/\s+/g, " ").trim();
   const sentences = clean.match(/[^.!?]+[.!?]+/g) || [clean];
@@ -150,17 +186,51 @@ function speakable(raw, lang = "en-US") {
 let voiceOn = false;
 let pendingReply = null;
 
+// Copilot Studio often answers one question with two messages: a filler
+// ("let me check...") and then the answer. Speaking only the first one
+// loses the answer altogether, so whatever arrives after it is queued and
+// spoken too, in order. Queueing rather than waiting costs no latency on
+// the common single-message reply.
+let replyQueue = [];
+// After the last reply is spoken, a straggler gets this long to turn up.
+// Deliberately short: this delay sits between the agent finishing and the
+// microphone opening, so a long one clips the start of the next question.
+const REPLY_GRACE_MS = 250;
+
 function onAgentReply(text) {
   bubble("agent", text);                      // the screen gets it all
-  if (pendingReply) { pendingReply(text); pendingReply = null; }
+  if (pendingReply) { const resolve = pendingReply; pendingReply = null; resolve(text); }
+  else if (voiceOn) replyQueue.push(text);    // arrived while we were speaking
 }
 
 function ask(text) {
+  replyQueue = [];
   return new Promise(resolve => { pendingReply = resolve; send(text); });
 }
 
-document.getElementById("mic").addEventListener("click", () => {
-  voiceOn = !voiceOn;                         // the click also unlocks audio
+// the next queued reply, or null if none turns up within the grace window
+function nextQueuedReply() {
+  if (replyQueue.length) return Promise.resolve(replyQueue.shift());
+  return new Promise(resolve => {
+    const poll = setInterval(() => {
+      if (!replyQueue.length) return;
+      clearInterval(poll); clearTimeout(giveUp);
+      resolve(replyQueue.shift());
+    }, 50);
+    const giveUp = setTimeout(() => { clearInterval(poll); resolve(null); }, REPLY_GRACE_MS);
+  });
+}
+
+const micButton = document.getElementById("mic");
+
+function setVoice(on) {                       // so the room can see the state
+  voiceOn = on;
+  micButton.textContent = on ? "Stop" : "Mic";
+  micButton.setAttribute("aria-pressed", String(on));
+}
+
+micButton.addEventListener("click", () => {
+  setVoice(!voiceOn);                         // the click also unlocks audio
   if (voiceOn) voiceTurn(); else stopSpeaking();
 });
 
@@ -200,15 +270,30 @@ async function speakInterruptibly(text, lang) {
 // the voice loop - an interruption becomes the next question
 async function voiceTurn() {
   let next = null;
-  while (voiceOn) {
-    let heard = next;
-    next = null;
-    if (!heard) {
-      try { heard = await listen(); }
-      catch { statusEl.textContent = "did not catch that - press the mic";
-              voiceOn = false; break; }
+  try {
+    while (voiceOn) {
+      let heard = next;
+      next = null;
+      if (!heard) {
+        try { heard = await listen(); }
+        catch (err) {
+          if (err.setup) throw err;   // a bad key is not a quiet room - say so
+          statusEl.textContent = "did not catch that - press the mic";
+          setVoice(false); break;
+        }
+      }
+      // speak the reply, then anything the agent adds after it
+      let reply = await ask(heard.text);
+      while (reply !== null && voiceOn && !next) {
+        next = await speakInterruptibly(speakable(reply, heard.lang), heard.lang);
+        reply = next ? null : await nextQueuedReply();
+      }
     }
-    const reply = await ask(heard.text);
-    next = await speakInterruptibly(speakable(reply, heard.lang), heard.lang);
+  } catch (err) {
+    // anything the loop could not recover from: a token route, a closed
+    // recognizer. Stop cleanly rather than leaving the button saying "Stop".
+    statusEl.textContent = "voice stopped";
+    bubble("error", err.message);
+    setVoice(false);
   }
 }

@@ -39,6 +39,7 @@ Three hops: speech to text, the agent, text to speech. The audio never touches y
 | `api/local.settings.json.example` | The three settings you need |
 | `package.json`, `scripts/copy-vendor.mjs` | `npm install` fetches the two browser SDKs and copies them into `vendor/`. No CDN and no bundler |
 | `agent/instructions.txt` | The agent instructions for Copilot Studio |
+| `test/` | Maintainer tests — the page in a real browser against a fake Direct Line service and a fake Speech SDK. Attendees can ignore this folder |
 | `knowledge/b_desk.md` | The Amber Line knowledge file (Scenario B) to upload to the agent |
 
 ---
@@ -95,6 +96,9 @@ curl -X POST http://localhost:4280/api/speech/token
 
 Then open **http://localhost:4280**. Type a question first, then press **Mic**.
 
+If a route is unhappy it says which setting to look at, and the page prints the
+same line in orange rather than sitting on "connecting…".
+
 ---
 
 ## Test it: ten utterances, out loud
@@ -114,6 +118,24 @@ Then open **http://localhost:4280**. Type a question first, then press **Mic**.
 
 ---
 
+## Checking it without Azure
+
+The tests replace Direct Line and the Speech SDK with fakes and drive the page
+in a real browser, so they run with no agent, no Speech resource, no key and no
+microphone. Worth doing before you present, and after any edit to `app.js`.
+
+```bash
+npm install --prefix test                       # once
+npx --prefix test playwright install chromium   # once
+npm test
+```
+
+They cover both token routes and the ten spoken utterances above, plus the
+failures people actually hit: a wrong secret, a missing setting, silence, and a
+two-message reply. Each case was checked to fail without the code that fixes it.
+
+---
+
 ## The settings worth touching
 
 | Where | Setting | Default here |
@@ -122,6 +144,7 @@ Then open **http://localhost:4280**. Type a question first, then press **Mic**.
 | `app.js` → `LANGS` | Candidate languages for detection (at most four) | `en-US`, `pl-PL` |
 | `app.js` → `VOICES` | One neural voice per language | `en-US-AvaMultilingualNeural`, `pl-PL-AgnieszkaNeural` |
 | `app.js` → `speakInterruptibly()` | Words heard before the agent stops talking | `2` |
+| `app.js` → `REPLY_GRACE_MS` | How long a second message may take to arrive before the mic reopens. Short on purpose: this sits between the agent finishing and the microphone opening | `250` |
 
 ---
 
@@ -130,15 +153,38 @@ Then open **http://localhost:4280**. Type a question first, then press **Mic**.
 | Symptom | Fix |
 |---|---|
 | "DirectLine is not a constructor" | The bundle exposes a namespace: `new DirectLine.DirectLine({ token })` |
-| Status says "failed to connect" | The token route failed. Run the `curl` above |
+| Status says "not connected", with an orange error line | Read the line — it names the route, the status code and the setting to check |
+| `{"error":"missing_setting","missing":[…]}` from a route | `api/local.settings.json` is absent or incomplete. Copy the example and fill in all three |
+| Status says "failed to connect" | The token arrived but Direct Line refused it, or a WebSocket is blocked on this network |
 | 401/403 from a token route | Wrong or regenerated secret or key; key and region from different resources |
 | No microphone prompt | Use `localhost`, not your IP address |
 | No audio | Start from the Mic button: browsers block audio before a click |
 | `DirectLine is not defined` | `vendor/` is empty. Run `npm install` in the repo root |
 | Polish transcribed as English | `pl-PL` is missing from `LANGS` |
 | It interrupts itself | Headset |
+| "voice stopped" with an orange line naming `SPEECH_KEY` | The Speech token route refused. Key and region must come from the same Keys and Endpoint blade |
+| You hear "let me check…" and then the answer | Expected. Copilot Studio answered in two messages; the page speaks both rather than losing the second. If the answer lands more than a second or so after the filler it is shown but not spoken — add "Answer in a single message" to the agent instructions |
 
 ---
+
+## Where this differs from the lab guide listings
+
+The guide builds `app.js` in six printed pieces. This repo is those pieces plus
+the fixes below — each one for something the guide itself warns about in a WATCH
+OUT or a troubleshooting row. If you are reading the two side by side, this is
+the whole list of differences; everything else is line for line.
+
+| Difference | Why |
+|---|---|
+| The Direct Line token fetch is wrapped, and the page reports the failure | In the printed version a failed token route throws out of the module's top-level `await`, so the page keeps saying "connecting…" and the mic and text box are never wired up. A wrong secret produced a page that did nothing, silently |
+| A second message is queued and spoken, not dropped | The guide's WATCH OUT: "the agent sometimes sends two messages for one question… if you hear the filler and never the answer". Queueing costs nothing on the usual single-message reply, where waiting for a settle window would delay every turn |
+| `speakable()` also strips a pipe left inline with prose | The line-based table strip only catches a row that starts and ends with `\|`. An agent that writes a table on the same line as its answer got the pipes read aloud |
+| A failed `/api/speech/token` reports itself | It surfaced as "did not catch that - press the mic", which sends you looking at the microphone when the problem is `SPEECH_KEY` |
+| The mic button says "Stop" while the loop runs | The loop is a toggle and the guide asks you to press it a second time. Nothing on the page said whether it was on |
+| The token routes check their settings before calling out | A missing `SPEECH_REGION` resolved `https://undefined.api.cognitive.microsoft.com` and surfaced as a bare 500 |
+
+None of this changes the shape of the lab, the build order, or anything an
+attendee types. `agent/instructions.txt` is unchanged from pack E.
 
 ## Before this goes anywhere public
 
