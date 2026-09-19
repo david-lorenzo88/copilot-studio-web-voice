@@ -54,6 +54,11 @@ Three hops: speech to text, the agent, text to speech. The audio never touches y
 
 ## Before you start
 
+About **90 minutes** if the prerequisites are done, and closer to two hours if this is your
+first Copilot Studio agent. It is built to be put down: the end of step 3 leaves you with text
+chat working on your own page, and the end of step 6 with a working voice loop. The guide
+carries the per-step budget.
+
 - A Power Platform environment with **Copilot Studio**. A trial is fine.
 - An **Azure AI Speech** resource (or a Foundry resource, which includes Speech), with its key and region.
 - **Node.js** (current LTS), **Azure Functions Core Tools v4**, and the **Static Web Apps CLI**:
