@@ -190,6 +190,40 @@ describe("the ten utterances", () => {
   });
 });
 
+describe("the state the lab leaves you in partway through", () => {
+  // People stop at the end of step 6, or run out of time. What they have then
+  // has to work on its own, so build app.js the way the guide has it at that
+  // point - parts 1 to 5 plus the throwaway loop, no barge-in - and drive it.
+  test("step 6 is a working conversation without step 7", async () => {
+    const html = readFileSync(join(HERE, "..", "06_Lab6_CopilotStudio_WebVoice.html"), "utf8");
+    const un = x => x.replace(/&quot;/g, '"').replace(/&#x27;/g, "'")
+                     .replace(/&lt;/g, "<").replace(/&gt;/g, ">").replace(/&amp;/g, "&");
+    const grab = label => {
+      const re = new RegExp(`<b>${label.replace(/[.*+?^$()|[\]\\—]/g, "\\$&")}</b>` +
+        `<button class="copy" data-copy="([\\s\\S]*?)"\\s+onclick=`);
+      const m = html.match(re);
+      assert.ok(m, `no listing labelled ${label}`);
+      return un(m[1]);
+    };
+    const stepSix = ["app.js — part 1", "app.js — part 2", "app.js — part 3",
+                     "app.js — speakable()", "app.js — part 4",
+                     "app.js — the loop, version one"].map(grab).join("\n\n") + "\n";
+    assert.doesNotMatch(stepSix, /speakInterruptibly/);
+
+    const page = await open({ routes: p =>
+      p.route("**/app.js", r => r.fulfill({ contentType: "text/javascript", body: stepSix })) });
+    await online(page);
+    await page.click("#mic");
+    await page.listening();
+    reply = () => [{ text: "The morning ferry leaves Gdynia at 09:00. Check-in closes an hour before. Foot passengers have longer." }];
+    await page.evaluate(() => window.__voice.say("What time is the morning ferry?"));
+    await sleep(900);
+    assert.match((await page.lastSpoken()).text, /09:00.*The rest is on your screen\.$/);
+    assert.deepEqual(page.errors, []);
+    await page.close();
+  });
+});
+
 describe("the failure modes an attendee will actually hit", () => {
   test("a broken token route says which setting, and leaves the page usable", async () => {
     const page = await open({ routes: p => p.route("**/api/directline/token",

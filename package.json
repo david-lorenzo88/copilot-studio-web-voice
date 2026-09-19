@@ -1,11 +1,11 @@
 {
   "name": "copilot-studio-web-voice",
   "private": true,
-  "description": "Baltic Summit 2026 \u00b7 Lab 6 \u2014 a Copilot Studio agent on your own web page, with voice.",
+  "description": "Baltic Summit 2026 · Lab 6 — a Copilot Studio agent on your own web page, with voice.",
   "scripts": {
     "postinstall": "node scripts/copy-vendor.mjs",
     "start": "swa start . --api-location api",
-    "test": "node --test test/api.test.mjs test/page.test.mjs"
+    "test": "node --test test/api.test.mjs test/guide.test.mjs test/page.test.mjs"
   },
   "devDependencies": {
     "botframework-directlinejs": "0.16.0",

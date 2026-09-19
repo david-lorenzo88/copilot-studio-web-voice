@@ -15,6 +15,7 @@ npm test
 
 | File | What it covers |
 |---|---|
+| `guide.test.mjs` | That the lab guide's listings still *are* these files — including that pasting the seven `app.js` parts in order reproduces `app.js` byte for byte, and that step 6 leaves you with a loop that works |
 | `api.test.mjs` | Both token routes: the right header to the right URL, the response shape, upstream failures, and a missing setting |
 | `page.test.mjs` | The page end to end: connect, greeting, text chat, the voice loop, `speakable()`, language detection, barge-in, and the failure modes |
 | `server.mjs` | Static files + fake token routes + a fake Direct Line v3 service (HTTP and WebSocket) |
@@ -22,3 +23,7 @@ npm test
 
 `page.test.mjs` maps onto the ten spoken utterances in the README, so a failure
 there names the utterance that would fail in the room.
+
+If you edit `app.js`, `guide.test.mjs` will fail until you make the same edit in
+the guide. That is the point: most attendees never clone this repo, so the HTML
+is the thing that has to be right.

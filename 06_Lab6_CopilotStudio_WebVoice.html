@@ -1,0 +1,1264 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1"><title>Lab 6 — Copilot Studio on the web, with a voice — Baltic Summit 2026</title>
+<style>
+:root{--navy:#0B2545;--navy2:#12395F;--fjord:#1B4E7A;--blue:#1E6FA8;--sky:#468FAF;
+--cyan:#57CFE1;--teal:#12B5A6;--teal-dk:#0E8577;--amber:#E8871E;--amber2:#F4A259;
+--red:#C1121F;--ink:#1B2130;--head:#0B2545;--mute:#5D6674;--line:#E1E7F0;
+--card:#EAF3FB;--card2:#E4F6F3;--card3:#FFF3E0;--grey:#F3F6FA;--wash:#EEF2F7;}
+*{box-sizing:border-box}html{scroll-behavior:smooth}html,body{margin:0}
+body{font-family:'Segoe UI',system-ui,-apple-system,sans-serif;color:var(--ink);background:var(--wash);line-height:1.52;font-size:13px}
+.wrap{max-width:920px;margin:0 auto;padding:0 20px 48px}a{color:var(--blue)}
+.cover{background:linear-gradient(135deg,#081b34 0%,var(--navy) 45%,#123a5e 100%);color:#fff;border-radius:0 0 20px 20px;padding:34px 46px 40px;margin-bottom:26px;position:relative;overflow:hidden}
+.cover::after{content:"";position:absolute;right:-120px;top:-90px;width:420px;height:300px;background:radial-gradient(closest-side,rgba(87,207,225,.55),rgba(87,207,225,0) 70%),radial-gradient(closest-side,rgba(18,181,166,.5),rgba(18,181,166,0) 70%);background-position:0 0,120px 90px;background-repeat:no-repeat;filter:blur(2px);opacity:.9}
+.cover-brand{display:flex;align-items:center;gap:12px;margin-bottom:20px;position:relative;z-index:2}
+.brick{width:34px;height:26px;border-radius:5px;background:linear-gradient(180deg,var(--cyan),var(--teal));position:relative;box-shadow:0 2px 6px rgba(0,0,0,.25)}
+.brick::before,.brick::after{content:"";position:absolute;top:-5px;width:9px;height:9px;border-radius:50%;background:var(--cyan)}
+.brick::before{left:6px}.brick::after{right:6px}
+.cover-wordmark{font-weight:800;letter-spacing:.5px;font-size:15px}.cover-wordmark span{color:var(--cyan)}
+.cover-kicker{color:var(--cyan);font-weight:700;letter-spacing:2.5px;text-transform:uppercase;font-size:12px;position:relative;z-index:2}
+.cover-title{font-size:33px;font-weight:800;margin:6px 0 4px;position:relative;z-index:2;line-height:1.12}
+.cover-sub{font-size:14.5px;color:#BFD3E6;position:relative;z-index:2;max-width:640px}
+.cover-pres{font-size:13px;color:#fff;font-weight:600;margin-top:14px;position:relative;z-index:2}
+.cover-meta{font-size:12.5px;color:#9FB7CE;position:relative;z-index:2}
+.cover-eventline{margin-top:12px;display:inline-block;background:rgba(255,255,255,.09);border:1px solid rgba(255,255,255,.16);padding:6px 13px;border-radius:20px;font-size:12px;color:#DCE8F2;position:relative;z-index:2}
+.toc{background:#fff;border:1px solid var(--line);border-radius:12px;padding:14px 18px;margin:0 0 22px}
+.toc-title{font-weight:700;color:var(--head);font-size:12px;text-transform:uppercase;letter-spacing:1px;margin-bottom:8px}
+.toc a{display:inline-block;margin:4px 8px 4px 0;color:var(--fjord);text-decoration:none;font-size:12px;border:1px solid var(--line);border-radius:16px;padding:4px 11px 4px 20px;position:relative}
+.toc a::before{content:"";position:absolute;left:8px;top:50%;transform:translateY(-50%);width:8px;height:8px;border-radius:2px;background:var(--sky)}
+.toc a:hover{background:var(--card);color:var(--blue)}
+.toc a.toc-parent::before{background:var(--navy)}.toc a.toc-connected::before{background:var(--teal)}.toc a.toc-child::before{background:var(--amber)}
+.toc a.toc-head{padding-left:11px}.toc a.toc-head::before{display:none}
+h2{font-size:22px;color:var(--head);margin:38px 0 8px;padding-top:18px;border-top:2px solid var(--line);scroll-margin-top:14px}
+h2::before{content:"";display:inline-block;width:26px;height:5px;background:linear-gradient(90deg,var(--cyan),var(--teal));border-radius:3px;vertical-align:middle;margin-right:12px}
+h2 .anchor{opacity:0;margin-left:8px;color:var(--sky);text-decoration:none;font-size:15px}h2:hover .anchor{opacity:.6}
+h3{font-size:16.5px;color:var(--fjord);margin:24px 0 6px}p{margin:8px 0}
+.li{background:var(--grey);border-left:3px solid var(--teal);padding:8px 14px;margin:6px 0;border-radius:0 7px 7px 0;font-size:13.5px}
+.intro-card{background:#fff;border:1px solid var(--line);border-left:5px solid var(--blue);padding:15px 20px;border-radius:11px;margin:14px 0}
+.stats{display:flex;gap:12px;margin:16px 0;flex-wrap:wrap}
+.stat{flex:1;min-width:120px;background:#fff;border:1px solid var(--line);border-top:4px solid var(--teal);border-radius:12px;padding:14px 16px;text-align:center}
+.stat-num{font-size:30px;font-weight:800;color:var(--head);line-height:1}.stat-lab{font-size:11.5px;color:var(--mute);text-transform:uppercase;letter-spacing:.6px;margin-top:6px}
+.bigpic{background:linear-gradient(135deg,var(--navy),#123a5e);color:#eaf2fb;border-radius:14px;padding:22px 26px;margin:20px 0}
+.bigpic h4{margin:0 0 8px;color:var(--cyan);font-size:15px}.bigpic p{color:#cfe0ee;margin:6px 0;font-size:13.5px}
+.bigpic .tag{display:inline-block;background:rgba(87,207,225,.14);border:1px solid rgba(87,207,225,.3);color:#cdeef5;padding:3px 10px;border-radius:14px;font-size:12px;margin-top:8px}
+.figure{background:#fff;border:1px solid var(--line);border-radius:14px;padding:18px;margin:20px 0;text-align:center}
+.figure img,.figure svg{max-width:100%;height:auto}.figure figcaption{margin-top:10px;font-size:12px;color:var(--mute);font-style:italic}
+.step{display:flex;gap:14px;background:#fff;border:1px solid var(--line);border-radius:11px;padding:14px 16px;margin:10px 0}
+.step-num{flex:0 0 34px;height:34px;background:linear-gradient(180deg,var(--blue),var(--fjord));color:#fff;border-radius:9px;font-weight:800;display:flex;align-items:center;justify-content:center}
+.step-title{font-weight:700;color:var(--head);margin-bottom:3px}.step-text{font-size:13.5px}
+.agentbar{display:flex;align-items:center;gap:14px;border-radius:12px;padding:13px 18px;margin:22px 0 8px;color:#fff}
+.agentbar-num{flex:0 0 40px;height:40px;border-radius:10px;background:rgba(255,255,255,.16);display:flex;align-items:center;justify-content:center;font-weight:800;font-size:15px}
+.agentbar-main{flex:1}.agentbar-name{font-weight:800;font-size:17px;line-height:1.15}.agentbar-sub{font-size:11.5px;opacity:.82;margin-top:1px}
+.agentbar-type{font-size:11px;font-weight:800;letter-spacing:1px;background:rgba(255,255,255,.18);padding:5px 11px;border-radius:20px;white-space:nowrap}
+.agentbar.parent{background:linear-gradient(120deg,var(--navy),var(--fjord))}.agentbar.connected{background:linear-gradient(120deg,var(--teal-dk),var(--teal))}.agentbar.child{background:linear-gradient(120deg,var(--amber-dk,#B4650A),var(--amber))}
+.callout{border-radius:11px;padding:14px 18px;margin:14px 0;border:1px solid}
+.callout-tag{font-weight:800;font-size:12px;margin-bottom:6px}.callout-head{font-weight:700;margin-bottom:4px}.callout p{margin:4px 0;font-size:13.5px}
+.callout.warn{background:#FFF4E2;border-color:#F1CE90}.callout.warn .callout-tag{color:var(--amber)}
+.callout.prompt{background:linear-gradient(135deg,var(--navy),#123a5e);border-color:#123a5e;color:#fff}
+.callout.prompt .callout-tag{color:var(--cyan)}.callout.prompt p{color:#DCEAF6;font-family:Consolas,'Courier New',monospace;font-size:13.5px}
+.callout.expect{background:var(--card2);border-color:#A8E3DA}.callout.expect .callout-tag{color:var(--teal-dk)}
+.callout.note{background:var(--card);border-color:#BCD9EE}.callout.note .callout-tag{color:var(--blue)}
+.tablewrap{overflow-x:auto;margin:14px 0}
+table.grid{width:100%;border-collapse:collapse;font-size:13px;background:#fff;border-radius:11px;overflow:hidden;border:1px solid var(--line)}
+table.grid th{background:linear-gradient(180deg,var(--fjord),var(--navy));color:#fff;text-align:left;padding:9px 12px;font-size:12px}
+table.grid td{padding:8px 12px;border-top:1px solid var(--line);vertical-align:top}table.grid tbody tr:nth-child(even) td{background:#F5F9FD}
+.copy{cursor:pointer;border:1px solid var(--line);background:#fff;color:var(--blue);font:700 11px 'Segoe UI',sans-serif;border-radius:7px;padding:3px 11px;vertical-align:middle;white-space:nowrap}
+.copy:hover{background:var(--card)}.copy.ok{background:var(--teal);color:#fff;border-color:var(--teal)}
+.copyrow{display:flex;justify-content:flex-end;margin-top:8px}.callout.prompt .copy{border-color:#2c527a;background:transparent;color:var(--cyan)}
+.instr{background:#081a30;border:1px solid #1c3450;border-radius:11px;margin:14px 0;overflow:hidden}
+.instr-bar{display:flex;align-items:center;justify-content:space-between;background:#061424;padding:10px 15px;border-bottom:1px solid #1c3450}.instr-bar b{color:var(--cyan);font-size:12px}
+.instr pre{margin:0;padding:15px 17px;white-space:pre-wrap;font-family:Consolas,'Courier New',monospace;font-size:12.5px;line-height:1.55;color:#e5eef8}
+td .val{display:inline-flex;align-items:center;gap:8px;justify-content:space-between;width:100%}td .copy{padding:1px 8px;font-size:10.5px}
+.brandbar{margin-top:42px;display:flex;align-items:center;gap:20px;background:linear-gradient(135deg,var(--navy),#123a5e);border-radius:16px;padding:18px 24px;color:#fff;flex-wrap:wrap}
+.bb-brand{display:flex;align-items:center;gap:12px}.bb-mid{flex:1;min-width:220px}.bb-name{font-weight:800;font-size:15px}
+.bb-links{font-size:12.5px;color:#BFD3E6;margin-top:4px}.bb-links a{color:var(--cyan);text-decoration:none}.bb-event{font-size:11.5px;color:#9FB7CE;margin-top:3px}
+.footer{margin-top:16px;padding-top:14px;border-top:1px solid var(--line);color:var(--mute);font-size:11.5px;text-align:center}
+.totop{position:fixed;right:18px;bottom:18px;background:var(--navy);color:#fff;border:none;border-radius:50%;width:44px;height:44px;font-size:18px;cursor:pointer;box-shadow:0 4px 14px rgba(11,37,69,.35);opacity:0;transition:opacity .2s;z-index:9}.totop.show{opacity:.92}
+@media print{.totop,.copy{display:none}body{background:#fff}}
+@media(max-width:640px){.cover{padding:26px 22px 30px}.cover-title{font-size:26px}.wrap{padding:0 12px 40px}}
+
+:root{--navy:#09376E;--navy2:#0D4680;--fjord:#1B5A8F;--blue:#2A6FA8;--sky:#538BAC;
+--cyan:#FFBD59;--teal:#1B9AA8;--teal-dk:#116E7C;--amber:#FFBD59;--amber-dk:#9A6408;
+--red:#B32218;--ink:#16202E;--head:#09376E;--mute:#5A6675;--line:#D6E1EE;
+--card:#E8F1FA;--card2:#E2F4F6;--card3:#FFF4E2;--grey:#F3F7FB;--wash:#EEF3F9;}
+.cover{background:linear-gradient(135deg,#04203E 0%,#09376E 46%,#1B5A8F 100%)}
+.cover::after{background:radial-gradient(closest-side,rgba(255,189,89,.5),rgba(255,189,89,0) 70%),radial-gradient(closest-side,rgba(83,139,172,.55),rgba(83,139,172,0) 70%)}
+.brick{background:linear-gradient(180deg,#538BAC,#1B5A8F)}
+.brick::before,.brick::after{background:#FFBD59}
+h2::before{background:linear-gradient(90deg,#FFBD59,#538BAC)}
+.step-num{background:linear-gradient(180deg,#2A6FA8,#09376E)}
+.li{border-left-color:#538BAC}
+.callout.prompt{background:linear-gradient(135deg,#09376E,#11497F);border-color:#11497F}
+.bigpic{background:linear-gradient(135deg,#09376E,#11497F)}
+.brandbar{background:linear-gradient(135deg,#09376E,#11497F)}
+table.grid th{background:linear-gradient(180deg,#1B5A8F,#09376E)}
+.scen{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:14px;margin:16px 0}
+.scen-card{background:#fff;border:1px solid var(--line);border-top:4px solid var(--sky);border-radius:12px;padding:15px 17px}
+.scen-card h4{margin:0 0 4px;color:var(--fjord);font-size:14.5px}
+.scen-card .who{font-size:11.5px;color:var(--mute);font-style:italic;margin-bottom:8px}
+.scen-card p{font-size:12.5px;margin:5px 0}
+.scen-card.a{border-top-color:#1B5A8F}.scen-card.b{border-top-color:#116E7C}
+.scen-card.c{border-top-color:#9A6408}.scen-card.d{border-top-color:#2A6FA8}
+.chk{list-style:none;padding:0;margin:12px 0}
+.chk li{background:#fff;border:1px solid var(--line);border-radius:9px;padding:10px 14px 10px 40px;margin:7px 0;position:relative;font-size:13px}
+.chk li::before{content:"";position:absolute;left:14px;top:12px;width:14px;height:14px;border:2px solid var(--sky);border-radius:3px}
+.chk li b{color:var(--head)}
+.pill{display:inline-block;background:var(--card);border:1px solid var(--line);color:var(--fjord);border-radius:14px;padding:2px 10px;font-size:11.5px;font-weight:700;margin:0 4px 4px 0}
+.pill.warn{background:var(--card3);border-color:#EBCB99;color:var(--amber-dk)}
+.pill.ok{background:var(--card2);border-color:#A6DFE5;color:var(--teal-dk)}
+.timebar{display:flex;gap:10px;flex-wrap:wrap;margin:14px 0}
+.timebar div{background:#fff;border:1px solid var(--line);border-radius:9px;padding:8px 13px;font-size:12px}
+.timebar div b{display:block;color:var(--head);font-size:13px}
+</style></head><body><div class="wrap">
+<div class="cover"><div class="cover-brand"><div class="brick"></div><div class="cover-wordmark">BALTIC <span>SUMMIT</span> 2026</div></div>
+<div class="cover-kicker">Lab guide 6 · Scenario E · self-paced take-home</div>
+<div class="cover-title">Put your Copilot Studio agent on the web, then give it a voice</div>
+<div class="cover-sub">Expose a Copilot Studio agent over Direct Line, build a small page around it with the Direct Line SDK, and add ears and a mouth with Azure AI Speech — without the browser ever holding a secret.</div>
+<div class="cover-pres">Samir Makwana  ·  David Lorenzo López</div><div class="cover-meta">Build order: text chat working before you touch a microphone.</div>
+<div class="cover-eventline">Baltic Summit 2026  ·  PPNT, Gdynia, Poland  ·  24 September 2026  ·  Room H</div></div>
+<nav class="toc"><div class="toc-title">Jump to</div><a href="#before-you-start" class="toc-head">Before you start</a><a href="#the-picture" class="toc-head">The picture</a><a href="#step-1-build-the-agent-ten-minutes-no-more" class="toc-head">Step 1 · Build the agent — ten minutes, no more</a><a href="#step-2-two-secrets-two-token-routes" class="toc-head">Step 2 · Two secrets, two token routes</a><a href="#step-3-text-chat-over-the-direct-line-sdk" class="toc-head">Step 3 · Text chat over the Direct Line SDK</a><a href="#step-4-ears-speech-to-text" class="toc-head">Step 4 · Ears: speech to text</a><a href="#step-5-a-mouth-text-to-speech" class="toc-head">Step 5 · A mouth: text to speech</a><a href="#step-6-make-it-speakable-then-close-the-loop" class="toc-head">Step 6 · Make it speakable, then close the loop</a><a href="#step-7-barge-in-built-by-hand" class="toc-head">Step 7 · Barge-in, built by hand</a><a href="#your-acceptance-test-ten-utterances-out-loud" class="toc-head">Your acceptance test — ten utterances, out loud</a><a href="#what-you-traded-for-a-web-channel" class="toc-head">What you traded for a web channel</a><a href="#troubleshooting" class="toc-head">Troubleshooting</a><a href="#finished-early-three-things-worth-doing" class="toc-head">Finished early? Three things worth doing</a><a href="#sources" class="toc-head">Sources</a></nav>
+<div class="bigpic"><h4>Lab 5 put a voice on the phone. Lab 6 puts one on your website.</h4><p>Copilot Studio real-time agents are generally available for <b>voice</b> — direct dial and Teams Phone — but still <b>preview on digital messaging</b>. If your channel is a website today, the path you can ship is an ordinary Copilot Studio agent over <b>Direct Line</b>, with the voice added by you, in the browser.</p><p>This is the three-hop speech pipeline from the morning, built on purpose: <b>speech to text, the agent, text to speech</b>. You will hear every hop. By the end you will know exactly what you gave up for a web channel you control — and what you got for it.</p><p>The agent is deliberately boring. Everything that matters in this lab happens on the page.</p><p><b>Build order rule:</b> get text chat working over Direct Line <i>before</i> you add a microphone. A voice loop on top of a broken conversation is two bugs pretending to be one.</p><div class="tag">Self-paced · about 60 minutes · rejoin marker at the end of Step 3</div></div>
+<div class="stats"><div class="stat"><div class="stat-num">60</div><div class="stat-lab">minutes at your own pace</div></div><div class="stat"><div class="stat-num">7</div><div class="stat-lab">steps</div></div><div class="stat"><div class="stat-num">2</div><div class="stat-lab">token routes</div></div><div class="stat"><div class="stat-num">3</div><div class="stat-lab">hops you will hear</div></div></div>
+<h2 id="before-you-start">Before you start<a class="anchor" href="#before-you-start">¶</a></h2>
+<ul class="chk"><li>A <b>Power Platform environment</b> with <b>Copilot Studio</b> — a trial is fine.</li><li>An <b>Azure AI Speech</b> resource, or a Foundry resource (it includes Speech), and its <b>key</b> and <b>region</b>. Sweden Central is fine.</li><li><b>Node.js</b> (current LTS), <b>Azure Functions Core Tools v4</b>, and the <b>Static Web Apps CLI</b>: <code>npm install -g @azure/static-web-apps-cli</code>.</li><li>Scenario B's knowledge file, <code>knowledge/b_desk.md</code>, and the <b>Scenario E</b> pack open.</li><li>A <b>headset</b>. Step 7 does not work without one.</li></ul>
+<div class="callout note"><div class="callout-tag">ℹ  WHY THIS MATTERS</div><div class="callout-head">You type this lab out. You do not clone it.</div><p>Every file is printed here in full, with a Copy button, in the order you create them — that is the point of the day. <code>github.com/david-lorenzo88/copilot-studio-web-voice</code> holds exactly the same code, so it is there if you fall behind, and worth a diff afterwards. The two cannot drift apart: a test in that repo assembles the listings on this page and fails the moment they stop matching the files.</p></div>
+<div class="callout warn"><div class="callout-tag">⚠  WATCH OUT</div><div class="callout-head">Do not switch this agent to Real-time.</div><p>Settings → Voice → Real-time is the one-way door from Lab 5, and it is not what this lab needs. Lab 6 uses a <b>standard</b> agent; the voice lives on your page, not in Copilot Studio.</p></div>
+<h2 id="the-picture">The picture<a class="anchor" href="#the-picture">¶</a></h2>
+<figure class="figure"><svg viewBox="0 0 1040 540" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="The web voice pipeline" font-family="Segoe UI,sans-serif" style="max-width:100%;height:auto"><defs><marker id="arr" markerWidth="9" markerHeight="9" refX="7" refY="4.5" orient="auto"><path d="M0 0 L9 4.5 L0 9 z" fill="#425672"/></marker><linearGradient id="orch" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#09376E"/><stop offset="1" stop-color="#1B5A8F"/></linearGradient><linearGradient id="conn" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#116E7C"/><stop offset="1" stop-color="#1B9AA8"/></linearGradient><linearGradient id="chld" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#9A6408"/><stop offset="1" stop-color="#FFBD59"/></linearGradient></defs><rect x="0" y="0" width="1040" height="540" fill="#FFFFFF"/>
+<rect x="420" y="20" width="200" height="70" rx="13" fill="url(#orch)"/>
+<text x="520.0" y="53.0" text-anchor="middle" font-family="Segoe UI,sans-serif" font-size="14" font-weight="700" fill="#fff">Your web app</text>
+<text x="520.0" y="69.0" text-anchor="middle" font-family="Segoe UI,sans-serif" font-size="10.5" fill="rgba(255,255,255,.85)">/api/directline/token · /api/speech/token</text>
+<rect x="420" y="150" width="200" height="160" rx="13" fill="#FFD489"/>
+<text x="520.0" y="228.0" text-anchor="middle" font-family="Segoe UI,sans-serif" font-size="16" font-weight="700" fill="#09376E">Browser</text>
+<text x="520.0" y="244.0" text-anchor="middle" font-family="Segoe UI,sans-serif" font-size="10.5" fill="rgba(9,55,110,.78)">mic · speaker · your page</text>
+<rect x="50" y="140" width="230" height="70" rx="13" fill="url(#conn)"/>
+<text x="165.0" y="173.0" text-anchor="middle" font-family="Segoe UI,sans-serif" font-size="14.5" font-weight="700" fill="#fff">Azure AI Speech</text>
+<text x="165.0" y="189.0" text-anchor="middle" font-family="Segoe UI,sans-serif" font-size="10.5" fill="rgba(255,255,255,.85)">speech to text</text>
+<rect x="50" y="250" width="230" height="70" rx="13" fill="url(#conn)"/>
+<text x="165.0" y="283.0" text-anchor="middle" font-family="Segoe UI,sans-serif" font-size="14.5" font-weight="700" fill="#fff">Azure AI Speech</text>
+<text x="165.0" y="299.0" text-anchor="middle" font-family="Segoe UI,sans-serif" font-size="10.5" fill="rgba(255,255,255,.85)">text to speech</text>
+<rect x="690" y="185" width="130" height="90" rx="13" fill="#2A6FA8"/>
+<text x="755.0" y="228.0" text-anchor="middle" font-family="Segoe UI,sans-serif" font-size="14.5" font-weight="700" fill="#fff">Direct Line</text>
+<text x="755.0" y="244.0" text-anchor="middle" font-family="Segoe UI,sans-serif" font-size="10.5" fill="rgba(255,255,255,.85)">WebSocket</text>
+<rect x="860" y="185" width="150" height="90" rx="13" fill="url(#chld)"/>
+<text x="935.0" y="228.0" text-anchor="middle" font-family="Segoe UI,sans-serif" font-size="14.5" font-weight="700" fill="#fff">Copilot Studio</text>
+<text x="935.0" y="244.0" text-anchor="middle" font-family="Segoe UI,sans-serif" font-size="10.5" fill="rgba(255,255,255,.85)">your agent</text>
+<line x1="520" y1="92" x2="520" y2="146" stroke="#1B5A8F" stroke-width="2.2" stroke-dasharray="5 4" marker-end="url(#arr)"/>
+<text x="528" y="124" text-anchor="start" font-size="10" fill="#5A6675">two short-lived tokens</text>
+<line x1="416" y1="55" x2="200" y2="136" stroke="#1B5A8F" stroke-width="2.2" stroke-dasharray="5 4" marker-end="url(#arr)"/>
+<text x="290" y="86" text-anchor="middle" font-size="10" fill="#5A6675">issueToken</text>
+<line x1="624" y1="55" x2="748" y2="181" stroke="#1B5A8F" stroke-width="2.2" stroke-dasharray="5 4" marker-end="url(#arr)"/>
+<text x="720" y="110" text-anchor="middle" font-size="10" fill="#5A6675">tokens/generate</text>
+<line x1="416" y1="168" x2="285" y2="168" stroke="#5A6E88" stroke-width="2.2" marker-end="url(#arr)"/>
+<text x="350" y="161" text-anchor="middle" font-size="10" fill="#5A6675">your voice</text>
+<line x1="285" y1="192" x2="416" y2="192" stroke="#5A6E88" stroke-width="2.2" marker-end="url(#arr)"/>
+<text x="350" y="206" text-anchor="middle" font-size="10" fill="#5A6675">text</text>
+<line x1="624" y1="215" x2="686" y2="215" stroke="#5A6E88" stroke-width="2.2" marker-end="url(#arr)"/>
+<text x="655" y="208" text-anchor="middle" font-size="10" fill="#5A6675">text</text>
+<line x1="686" y1="250" x2="624" y2="250" stroke="#5A6E88" stroke-width="2.2" marker-end="url(#arr)"/>
+<text x="655" y="265" text-anchor="middle" font-size="10" fill="#5A6675">reply</text>
+<line x1="824" y1="215" x2="856" y2="215" stroke="#5A6E88" stroke-width="2.2" marker-end="url(#arr)"/>
+<line x1="856" y1="250" x2="824" y2="250" stroke="#5A6E88" stroke-width="2.2" marker-end="url(#arr)"/>
+<line x1="416" y1="272" x2="285" y2="272" stroke="#5A6E88" stroke-width="2.2" marker-end="url(#arr)"/>
+<text x="350" y="265" text-anchor="middle" font-size="10" fill="#5A6675">reply text</text>
+<line x1="285" y1="296" x2="416" y2="296" stroke="#5A6E88" stroke-width="2.2" marker-end="url(#arr)"/>
+<text x="350" y="310" text-anchor="middle" font-size="10" fill="#5A6675">audio</text>
+<circle cx="50" cy="140" r="12" fill="#9A6408"/><text x="50" y="144.5" text-anchor="middle" font-size="12" font-weight="800" fill="#fff">1</text>
+<circle cx="690" cy="185" r="12" fill="#9A6408"/><text x="690" y="189.5" text-anchor="middle" font-size="12" font-weight="800" fill="#fff">2</text>
+<circle cx="50" cy="250" r="12" fill="#9A6408"/><text x="50" y="254.5" text-anchor="middle" font-size="12" font-weight="800" fill="#fff">3</text>
+<circle cx="62" cy="362" r="10" fill="#9A6408"/>
+<text x="62" y="366" text-anchor="middle" font-size="10.5" font-weight="800" fill="#fff">1</text>
+<text x="84" y="366" font-size="12" font-weight="700" fill="#16202E">Speech to text: the browser streams the mic</text>
+<text x="470" y="366" font-family="Consolas,monospace" font-size="11" fill="#1B5A8F">SpeechRecognizer · recognizeOnceAsync</text>
+<circle cx="62" cy="392" r="10" fill="#9A6408"/>
+<text x="62" y="396" text-anchor="middle" font-size="10.5" font-weight="800" fill="#fff">2</text>
+<text x="84" y="396" font-size="12" font-weight="700" fill="#16202E">The agent: text over Direct Line, reply comes back</text>
+<text x="470" y="396" font-family="Consolas,monospace" font-size="11" fill="#1B5A8F">DirectLine.postActivity · activity$</text>
+<circle cx="62" cy="422" r="10" fill="#9A6408"/>
+<text x="62" y="426" text-anchor="middle" font-size="10.5" font-weight="800" fill="#fff">3</text>
+<text x="84" y="426" font-size="12" font-weight="700" fill="#16202E">Text to speech: the reply text becomes audio</text>
+<text x="470" y="426" font-family="Consolas,monospace" font-size="11" fill="#1B5A8F">SpeechSynthesizer · SpeakerAudioDestination</text>
+<circle cx="62" cy="452" r="10" fill="#1B5A8F"/>
+<text x="62" y="456" text-anchor="middle" font-size="10.5" font-weight="800" fill="#fff">K</text>
+<text x="84" y="456" font-size="12" font-weight="700" fill="#16202E">Your web app holds both secrets</text>
+<text x="470" y="456" font-family="Consolas,monospace" font-size="11" fill="#1B5A8F">DIRECTLINE_SECRET · SPEECH_KEY never leave it</text>
+<rect x="40" y="482" width="960" height="44" rx="12" fill="#09376E"/>
+<text x="520" y="509" text-anchor="middle" font-size="12.5" font-weight="700" fill="#FFBD59">Three hops you can hear. The audio never touches your server, and no secret ever reaches the browser.</text></svg><figcaption>Speech to text, the agent, text to speech. The browser is the hub; your web app only hands out tokens.</figcaption></figure>
+<div class="callout note"><div class="callout-tag">ℹ  WHY THIS MATTERS</div><div class="callout-head">Same rule as Lab 1, twice over.</div><p>Two secrets this time: the <b>Direct Line secret</b> and the <b>Speech key</b>. Both stay on your server. The browser only ever gets tokens that expire — 30 minutes for Direct Line, 10 minutes for Speech — and then talks to each service directly.</p></div>
+<h2 id="step-1-build-the-agent-ten-minutes-no-more">Step 1 · Build the agent — ten minutes, no more<a class="anchor" href="#step-1-build-the-agent-ten-minutes-no-more">¶</a></h2>
+<p>Ten minutes. If you spend longer than that on the agent, you are doing a different lab.</p>
+<div class="step"><div class="step-num">1</div><div><div class="step-title">Create the agent</div><div class="step-text">In Copilot Studio, <b>Create</b> → <b>New agent</b>. Name it something disposable, like <code>baltic-web-voice</code>.</div></div></div>
+<div class="step"><div class="step-num">2</div><div><div class="step-title">Add the knowledge</div><div class="step-text"><b>Knowledge</b> → <b>Add knowledge</b> → upload <code>b_desk.md</code> from Scenario B. A public website works too, but the test utterances in pack E assume the Amber Line file.</div></div></div>
+<div class="step"><div class="step-num">3</div><div><div class="step-title">Paste the instructions from pack E</div><div class="step-text">They are Scenario B's rules plus three lines written for a page that may read the reply aloud.</div></div></div>
+<div class="instr"><div class="instr-bar"><b>instructions · Scenario E</b><button class="copy" data-copy="You are the web assistant for Amber Line, a ferry operator
+running between Gdynia and Karlskrona. You answer questions from
+people on the Amber Line website, typed or spoken.
+
+Your reply may be read aloud. Put the answer in the first
+sentence, and keep the whole reply to at most two sentences.
+Never read more than three sailing options. Say how many there
+are and that the full list is on the screen.
+Do not put links, tables or reference numbers in the first
+sentence - that is the one the guest will hear.
+
+If you do not know, say so plainly and offer what you do know.
+Never invent a sailing time, a fare, or a rule about pets or
+vehicles - those are the ones that ruin someone&#x27;s day.
+
+Reply in whatever language the guest uses.
+
+You cannot book or change anything from this page. If the guest
+wants to, point them to the booking page or offer a person.
+
+If the guest asks twice for a person, offer to hand over to the
+contact centre." onclick="copyBtn(this)">Copy</button></div><pre>You are the web assistant for Amber Line, a ferry operator
+running between Gdynia and Karlskrona. You answer questions from
+people on the Amber Line website, typed or spoken.
+
+Your reply may be read aloud. Put the answer in the first
+sentence, and keep the whole reply to at most two sentences.
+Never read more than three sailing options. Say how many there
+are and that the full list is on the screen.
+Do not put links, tables or reference numbers in the first
+sentence - that is the one the guest will hear.
+
+If you do not know, say so plainly and offer what you do know.
+Never invent a sailing time, a fare, or a rule about pets or
+vehicles - those are the ones that ruin someone&#x27;s day.
+
+Reply in whatever language the guest uses.
+
+You cannot book or change anything from this page. If the guest
+wants to, point them to the booking page or offer a person.
+
+If the guest asks twice for a person, offer to hand over to the
+contact centre.</pre></div>
+<div class="step"><div class="step-num">4</div><div><div class="step-title">Test once, then publish</div><div class="step-text">Ask <i>“What time is the morning ferry to Karlskrona?”</i> in the test pane. When it answers from the file, select <b>Publish</b>.</div></div></div>
+<div class="callout expect"><div class="callout-tag">✓  YOU SHOULD SEE</div><div class="callout-head">A two-sentence answer that mentions 09:00.</div><p>If it answers from general knowledge instead, the file did not index yet — wait a minute and ask again.</p></div>
+<h2 id="step-2-two-secrets-two-token-routes">Step 2 · Two secrets, two token routes<a class="anchor" href="#step-2-two-secrets-two-token-routes">¶</a></h2>
+<div class="step"><div class="step-num">1</div><div><div class="step-title">Copy the Direct Line secret</div><div class="step-text"><b>Settings</b> → <b>Security</b> → <b>Web channel security</b> → <b>Copy</b> next to <b>Secret 1</b>.</div></div></div>
+<div class="callout warn"><div class="callout-tag">⚠  WATCH OUT</div><div class="callout-head">Leave “Require secured access” alone today.</div><p>Turning it on or off can take <b>up to two hours</b> to take effect. Flip it the morning of a demo and you will spend the demo wondering which setting you are running.</p></div>
+<div class="step"><div class="step-num">2</div><div><div class="step-title">Collect three strings</div><div class="step-text">Same habit as Lab 1: get them all now, not mid-code.</div></div></div>
+<div class="tablewrap"><table class="grid"><thead><tr><th>What</th><th>Where it is</th><th>Looks like</th></tr></thead><tbody><tr><td><b>DIRECTLINE_SECRET</b></td><td>Copilot Studio → Settings → Security → Web channel security</td><td>a long string with dots in it</td></tr><tr><td><b>SPEECH_KEY</b></td><td>Azure portal → your Speech or Foundry resource → Keys and Endpoint</td><td>32+ characters</td></tr><tr><td><b>SPEECH_REGION</b></td><td>Same blade — the <i>Location/Region</i> value, lower case, no spaces</td><td><code>swedencentral</code></td></tr></tbody></table></div>
+<div class="step"><div class="step-num">3</div><div><div class="step-title">Lay out the project</div><div class="step-text">Nine files and three folders. Everything in this lab is one of them; nothing else gets created.</div></div></div>
+<div class="instr"><div class="instr-bar"><b>Project layout</b><button class="copy" data-copy="web-voice/
+  index.html                 (step 3)
+  style.css                  (step 3)
+  app.js                     (step 3 onwards)
+  package.json               (step 3 - pins the two SDKs)
+  scripts/copy-vendor.mjs    (step 3 - copies them into vendor/)
+  vendor/                    (step 3 - not yours, not in git)
+  staticwebapp.config.json
+  .gitignore
+  api/
+    host.json
+    package.json
+    local.settings.json      (git-ignored - your secrets)
+    src/functions/tokens.js" onclick="copyBtn(this)">Copy</button></div><pre>web-voice/
+  index.html                 (step 3)
+  style.css                  (step 3)
+  app.js                     (step 3 onwards)
+  package.json               (step 3 - pins the two SDKs)
+  scripts/copy-vendor.mjs    (step 3 - copies them into vendor/)
+  vendor/                    (step 3 - not yours, not in git)
+  staticwebapp.config.json
+  .gitignore
+  api/
+    host.json
+    package.json
+    local.settings.json      (git-ignored - your secrets)
+    src/functions/tokens.js</pre></div>
+<p>Two more before the code. The first is how Azure Static Web Apps runs the site; the second is the one that stops you pushing your Direct Line secret to GitHub at 16:05.</p><div class="instr"><div class="instr-bar"><b>staticwebapp.config.json</b><button class="copy" data-copy="{
+  &quot;platform&quot;: { &quot;apiRuntime&quot;: &quot;node:20&quot; },
+  &quot;globalHeaders&quot;: { &quot;Permissions-Policy&quot;: &quot;microphone=(self)&quot; }
+}" onclick="copyBtn(this)">Copy</button></div><pre>{
+  &quot;platform&quot;: { &quot;apiRuntime&quot;: &quot;node:20&quot; },
+  &quot;globalHeaders&quot;: { &quot;Permissions-Policy&quot;: &quot;microphone=(self)&quot; }
+}</pre></div><div class="callout note"><div class="callout-tag">ℹ  WHY THIS MATTERS</div><div class="callout-head">A Permissions-Policy header, for one line of difference.</div><p>A browser will hand the microphone to a same-origin page by default, so this changes nothing on <code>localhost</code>. It matters the moment the page is embedded, or served behind anything that sets its own policy — and it is far easier to add now than to diagnose later, when the only symptom is a permission prompt that never appears.</p></div><div class="instr"><div class="instr-bar"><b>.gitignore</b><button class="copy" data-copy="node_modules/
+vendor/
+api/local.settings.json
+.env
+.DS_Store" onclick="copyBtn(this)">Copy</button></div><pre>node_modules/
+vendor/
+api/local.settings.json
+.env
+.DS_Store</pre></div><div class="instr"><div class="instr-bar"><b>api/local.settings.json</b><button class="copy" data-copy="{
+  &quot;IsEncrypted&quot;: false,
+  &quot;Values&quot;: {
+    &quot;FUNCTIONS_WORKER_RUNTIME&quot;: &quot;node&quot;,
+    &quot;DIRECTLINE_SECRET&quot;: &quot;&lt;Secret 1 from Web channel security&gt;&quot;,
+    &quot;SPEECH_KEY&quot;: &quot;&lt;your Speech key&gt;&quot;,
+    &quot;SPEECH_REGION&quot;: &quot;swedencentral&quot;
+  }
+}" onclick="copyBtn(this)">Copy</button></div><pre>{
+  &quot;IsEncrypted&quot;: false,
+  &quot;Values&quot;: {
+    &quot;FUNCTIONS_WORKER_RUNTIME&quot;: &quot;node&quot;,
+    &quot;DIRECTLINE_SECRET&quot;: &quot;&lt;Secret 1 from Web channel security&gt;&quot;,
+    &quot;SPEECH_KEY&quot;: &quot;&lt;your Speech key&gt;&quot;,
+    &quot;SPEECH_REGION&quot;: &quot;swedencentral&quot;
+  }
+}</pre></div>
+<div class="instr"><div class="instr-bar"><b>api/package.json</b><button class="copy" data-copy="{
+  &quot;name&quot;: &quot;web-voice-api&quot;,
+  &quot;version&quot;: &quot;1.0.0&quot;,
+  &quot;main&quot;: &quot;src/functions/*.js&quot;,
+  &quot;dependencies&quot;: { &quot;@azure/functions&quot;: &quot;^4.0.0&quot; }
+}" onclick="copyBtn(this)">Copy</button></div><pre>{
+  &quot;name&quot;: &quot;web-voice-api&quot;,
+  &quot;version&quot;: &quot;1.0.0&quot;,
+  &quot;main&quot;: &quot;src/functions/*.js&quot;,
+  &quot;dependencies&quot;: { &quot;@azure/functions&quot;: &quot;^4.0.0&quot; }
+}</pre></div>
+<div class="instr"><div class="instr-bar"><b>api/host.json</b><button class="copy" data-copy="{
+  &quot;version&quot;: &quot;2.0&quot;,
+  &quot;extensionBundle&quot;: {
+    &quot;id&quot;: &quot;Microsoft.Azure.Functions.ExtensionBundle&quot;,
+    &quot;version&quot;: &quot;[4.*, 5.0.0)&quot;
+  }
+}" onclick="copyBtn(this)">Copy</button></div><pre>{
+  &quot;version&quot;: &quot;2.0&quot;,
+  &quot;extensionBundle&quot;: {
+    &quot;id&quot;: &quot;Microsoft.Azure.Functions.ExtensionBundle&quot;,
+    &quot;version&quot;: &quot;[4.*, 5.0.0)&quot;
+  }
+}</pre></div>
+<div class="step"><div class="step-num">4</div><div><div class="step-title">Write the two token routes</div><div class="step-text">One file, two routes. Each reads a secret from settings, swaps it for a token, and returns only the token.</div></div></div>
+<div class="instr"><div class="instr-bar"><b>api/src/functions/tokens.js</b><button class="copy" data-copy="const { app } = require(&quot;@azure/functions&quot;);
+
+// Both routes swap a secret for a short-lived token and return only the
+// token. If a setting is missing, say which one: without this the host
+// returns a bare 500 and the page cannot tell you why.
+function missing(...names) {
+  return names.filter(n =&gt; !process.env[n]);
+}
+
+// POST /api/directline/token -&gt; { conversationId, token, expires_in }
+// The Direct Line SECRET stays here. The browser gets a token that
+// works for one conversation and expires in 30 minutes.
+app.http(&quot;directlineToken&quot;, {
+  route: &quot;directline/token&quot;,
+  methods: [&quot;POST&quot;],
+  authLevel: &quot;anonymous&quot;,
+  handler: async (_request, context) =&gt; {
+    const absent = missing(&quot;DIRECTLINE_SECRET&quot;);
+    if (absent.length) {
+      context.error(`missing setting(s): ${absent.join(&quot;, &quot;)}`);
+      return { status: 500, jsonBody: { error: &quot;missing_setting&quot;, missing: absent } };
+    }
+    let r;
+    try {
+      r = await fetch(
+        &quot;https://directline.botframework.com/v3/directline/tokens/generate&quot;,
+        { method: &quot;POST&quot;,
+          headers: { Authorization: `Bearer ${process.env.DIRECTLINE_SECRET}` } });
+    } catch (e) {
+      context.error(e);
+      return { status: 502, jsonBody: { error: &quot;directline_unreachable&quot; } };
+    }
+    if (!r.ok) return { status: r.status, jsonBody: { error: &quot;directline_token_failed&quot; } };
+    return { jsonBody: await r.json(), headers: { &quot;Cache-Control&quot;: &quot;no-store&quot; } };
+  }
+});
+
+// POST /api/speech/token -&gt; { token, region, expires_in }
+// The Speech KEY stays here. The token is valid for 10 minutes;
+// we tell the browser 9 so it refreshes early.
+app.http(&quot;speechToken&quot;, {
+  route: &quot;speech/token&quot;,
+  methods: [&quot;POST&quot;],
+  authLevel: &quot;anonymous&quot;,
+  handler: async (_request, context) =&gt; {
+    const absent = missing(&quot;SPEECH_KEY&quot;, &quot;SPEECH_REGION&quot;);
+    if (absent.length) {
+      context.error(`missing setting(s): ${absent.join(&quot;, &quot;)}`);
+      return { status: 500, jsonBody: { error: &quot;missing_setting&quot;, missing: absent } };
+    }
+    const { SPEECH_KEY, SPEECH_REGION } = process.env;
+    let r;
+    try {
+      r = await fetch(
+        `https://${SPEECH_REGION}.api.cognitive.microsoft.com/sts/v1.0/issueToken`,
+        { method: &quot;POST&quot;,
+          headers: { &quot;Ocp-Apim-Subscription-Key&quot;: SPEECH_KEY, &quot;Content-Length&quot;: &quot;0&quot; } });
+    } catch (e) {
+      context.error(e);
+      return { status: 502, jsonBody: { error: &quot;speech_unreachable&quot;, region: SPEECH_REGION } };
+    }
+    if (!r.ok) return { status: r.status, jsonBody: { error: &quot;speech_token_failed&quot; } };
+    return {
+      jsonBody: { token: await r.text(), region: SPEECH_REGION, expires_in: 540 },
+      headers: { &quot;Cache-Control&quot;: &quot;no-store&quot; }
+    };
+  }
+});" onclick="copyBtn(this)">Copy</button></div><pre>const { app } = require(&quot;@azure/functions&quot;);
+
+// Both routes swap a secret for a short-lived token and return only the
+// token. If a setting is missing, say which one: without this the host
+// returns a bare 500 and the page cannot tell you why.
+function missing(...names) {
+  return names.filter(n =&gt; !process.env[n]);
+}
+
+// POST /api/directline/token -&gt; { conversationId, token, expires_in }
+// The Direct Line SECRET stays here. The browser gets a token that
+// works for one conversation and expires in 30 minutes.
+app.http(&quot;directlineToken&quot;, {
+  route: &quot;directline/token&quot;,
+  methods: [&quot;POST&quot;],
+  authLevel: &quot;anonymous&quot;,
+  handler: async (_request, context) =&gt; {
+    const absent = missing(&quot;DIRECTLINE_SECRET&quot;);
+    if (absent.length) {
+      context.error(`missing setting(s): ${absent.join(&quot;, &quot;)}`);
+      return { status: 500, jsonBody: { error: &quot;missing_setting&quot;, missing: absent } };
+    }
+    let r;
+    try {
+      r = await fetch(
+        &quot;https://directline.botframework.com/v3/directline/tokens/generate&quot;,
+        { method: &quot;POST&quot;,
+          headers: { Authorization: `Bearer ${process.env.DIRECTLINE_SECRET}` } });
+    } catch (e) {
+      context.error(e);
+      return { status: 502, jsonBody: { error: &quot;directline_unreachable&quot; } };
+    }
+    if (!r.ok) return { status: r.status, jsonBody: { error: &quot;directline_token_failed&quot; } };
+    return { jsonBody: await r.json(), headers: { &quot;Cache-Control&quot;: &quot;no-store&quot; } };
+  }
+});
+
+// POST /api/speech/token -&gt; { token, region, expires_in }
+// The Speech KEY stays here. The token is valid for 10 minutes;
+// we tell the browser 9 so it refreshes early.
+app.http(&quot;speechToken&quot;, {
+  route: &quot;speech/token&quot;,
+  methods: [&quot;POST&quot;],
+  authLevel: &quot;anonymous&quot;,
+  handler: async (_request, context) =&gt; {
+    const absent = missing(&quot;SPEECH_KEY&quot;, &quot;SPEECH_REGION&quot;);
+    if (absent.length) {
+      context.error(`missing setting(s): ${absent.join(&quot;, &quot;)}`);
+      return { status: 500, jsonBody: { error: &quot;missing_setting&quot;, missing: absent } };
+    }
+    const { SPEECH_KEY, SPEECH_REGION } = process.env;
+    let r;
+    try {
+      r = await fetch(
+        `https://${SPEECH_REGION}.api.cognitive.microsoft.com/sts/v1.0/issueToken`,
+        { method: &quot;POST&quot;,
+          headers: { &quot;Ocp-Apim-Subscription-Key&quot;: SPEECH_KEY, &quot;Content-Length&quot;: &quot;0&quot; } });
+    } catch (e) {
+      context.error(e);
+      return { status: 502, jsonBody: { error: &quot;speech_unreachable&quot;, region: SPEECH_REGION } };
+    }
+    if (!r.ok) return { status: r.status, jsonBody: { error: &quot;speech_token_failed&quot; } };
+    return {
+      jsonBody: { token: await r.text(), region: SPEECH_REGION, expires_in: 540 },
+      headers: { &quot;Cache-Control&quot;: &quot;no-store&quot; }
+    };
+  }
+});</pre></div>
+<div class="callout warn"><div class="callout-tag">⚠  WATCH OUT</div><div class="callout-head">The Speech token does not need an Authorization header — it needs the key header.</div><p><code>issueToken</code> takes <code>Ocp-Apim-Subscription-Key</code>. Direct Line takes <code>Authorization: Bearer &lt;secret&gt;</code>. Swap them and both return 401, which looks exactly like a wrong key.</p></div>
+<div class="step"><div class="step-num">5</div><div><div class="step-title">Run it, and test the routes on their own</div><div class="step-text">The Static Web Apps CLI serves the page and the functions on one port.</div></div></div>
+<div class="instr"><div class="instr-bar"><b>Terminal</b><button class="copy" data-copy="cd web-voice/api &amp;&amp; npm install &amp;&amp; cd ..
+swa start . --api-location api" onclick="copyBtn(this)">Copy</button></div><pre>cd web-voice/api &amp;&amp; npm install &amp;&amp; cd ..
+swa start . --api-location api</pre></div>
+<div class="instr"><div class="instr-bar"><b>Terminal — a second one</b><button class="copy" data-copy="curl -X POST http://localhost:4280/api/directline/token
+curl -X POST http://localhost:4280/api/speech/token" onclick="copyBtn(this)">Copy</button></div><pre>curl -X POST http://localhost:4280/api/directline/token
+curl -X POST http://localhost:4280/api/speech/token</pre></div>
+<div class="callout expect"><div class="callout-tag">✓  YOU SHOULD SEE</div><div class="callout-head">Two JSON bodies: one with <code>conversationId</code>, <code>token</code> and <code>expires_in: 1800</code>, one with a token and your region.</div><p>Both routes work before any browser code exists. That is the point — the server half is finished.</p></div>
+<div class="tablewrap"><table class="grid"><thead><tr><th>What you see</th><th>What it means</th><th>Fix</th></tr></thead><tbody><tr><td><b>403</b> or <b>401</b> from the Direct Line route</td><td>Wrong or regenerated secret</td><td>Copy Secret 1 again — no spaces, no quotes</td></tr><tr><td><b>401</b> from the Speech route</td><td>Wrong key, or key and region from different resources</td><td>Copy both from the same Keys and Endpoint blade</td></tr><tr><td><b>404</b> on <code>/api/…</code></td><td>The CLI did not find the functions</td><td>Check <code>--api-location api</code> and the <code>main</code> glob in package.json</td></tr><tr><td><b>500</b> and <code>{"error":"missing_setting","missing":[…]}</code></td><td>A setting is missing</td><td>The body names it. Check <code>local.settings.json</code> sits inside <code>api/</code> and has all three values</td></tr><tr><td><b>502</b> <code>speech_unreachable</code></td><td>The region in the URL does not resolve</td><td><code>SPEECH_REGION</code> is a region id like <code>swedencentral</code>, not "Sweden Central"</td></tr></tbody></table></div>
+<div class="callout warn"><div class="callout-tag">⚠  WATCH OUT</div><div class="callout-head">Anonymous token routes are for your laptop.</div><p>Anyone who can reach them can talk to your agent on your capacity. Before this goes public, put the routes behind your site's sign-in or a rate limit — the same item as the production checklist in Part 2.</p></div>
+<h2 id="step-3-text-chat-over-the-direct-line-sdk">Step 3 · Text chat over the Direct Line SDK<a class="anchor" href="#step-3-text-chat-over-the-direct-line-sdk">¶</a></h2>
+<div class="callout note"><div class="callout-tag">ℹ  WHY THIS MATTERS</div><div class="callout-head">Why the SDK, and not a polling loop you write yourself.</div><p><code>botframework-directlinejs</code> gives you the conversation as an observable stream, a WebSocket by default, a connection-status stream, and — because you start it with a token — it <b>refreshes that token every 15 minutes on its own</b>. The 30-minute expiry stops being your problem.</p></div>
+<div class="step"><div class="step-num">1</div><div><div class="step-title">Put the two SDKs next to your page</div><div class="step-text">No build step, no bundler and no CDN. Two files declare it: <code>package.json</code> pins the versions, and a five-line script copies the browser bundles into <code>vendor/</code> on every install.</div></div></div><div class="instr"><div class="instr-bar"><b>package.json</b><button class="copy" data-copy="{
+  &quot;name&quot;: &quot;copilot-studio-web-voice&quot;,
+  &quot;private&quot;: true,
+  &quot;description&quot;: &quot;Baltic Summit 2026 · Lab 6 — a Copilot Studio agent on your own web page, with voice.&quot;,
+  &quot;scripts&quot;: {
+    &quot;postinstall&quot;: &quot;node scripts/copy-vendor.mjs&quot;,
+    &quot;start&quot;: &quot;swa start . --api-location api&quot;,
+    &quot;test&quot;: &quot;node --test test/api.test.mjs test/guide.test.mjs test/page.test.mjs&quot;
+  },
+  &quot;devDependencies&quot;: {
+    &quot;botframework-directlinejs&quot;: &quot;0.16.0&quot;,
+    &quot;microsoft-cognitiveservices-speech-sdk&quot;: &quot;1.51.0&quot;
+  }
+}" onclick="copyBtn(this)">Copy</button></div><pre>{
+  &quot;name&quot;: &quot;copilot-studio-web-voice&quot;,
+  &quot;private&quot;: true,
+  &quot;description&quot;: &quot;Baltic Summit 2026 · Lab 6 — a Copilot Studio agent on your own web page, with voice.&quot;,
+  &quot;scripts&quot;: {
+    &quot;postinstall&quot;: &quot;node scripts/copy-vendor.mjs&quot;,
+    &quot;start&quot;: &quot;swa start . --api-location api&quot;,
+    &quot;test&quot;: &quot;node --test test/api.test.mjs test/guide.test.mjs test/page.test.mjs&quot;
+  },
+  &quot;devDependencies&quot;: {
+    &quot;botframework-directlinejs&quot;: &quot;0.16.0&quot;,
+    &quot;microsoft-cognitiveservices-speech-sdk&quot;: &quot;1.51.0&quot;
+  }
+}</pre></div><div class="instr"><div class="instr-bar"><b>scripts/copy-vendor.mjs</b><button class="copy" data-copy="// Copies the two browser bundles from node_modules into vendor/,
+// so index.html can load them with plain &lt;script&gt; tags. Runs on npm install.
+import { mkdirSync, copyFileSync } from &quot;node:fs&quot;;
+
+const files = [
+  [&quot;node_modules/botframework-directlinejs/dist/directline.js&quot;, &quot;vendor/directline.js&quot;],
+  [&quot;node_modules/microsoft-cognitiveservices-speech-sdk/distrib/browser/microsoft.cognitiveservices.speech.sdk.bundle-min.js&quot;, &quot;vendor/speech.js&quot;]
+];
+
+mkdirSync(&quot;vendor&quot;, { recursive: true });
+for (const [from, to] of files) {
+  copyFileSync(from, to);
+  console.log(`vendor: ${to}`);
+}" onclick="copyBtn(this)">Copy</button></div><pre>// Copies the two browser bundles from node_modules into vendor/,
+// so index.html can load them with plain &lt;script&gt; tags. Runs on npm install.
+import { mkdirSync, copyFileSync } from &quot;node:fs&quot;;
+
+const files = [
+  [&quot;node_modules/botframework-directlinejs/dist/directline.js&quot;, &quot;vendor/directline.js&quot;],
+  [&quot;node_modules/microsoft-cognitiveservices-speech-sdk/distrib/browser/microsoft.cognitiveservices.speech.sdk.bundle-min.js&quot;, &quot;vendor/speech.js&quot;]
+];
+
+mkdirSync(&quot;vendor&quot;, { recursive: true });
+for (const [from, to] of files) {
+  copyFileSync(from, to);
+  console.log(`vendor: ${to}`);
+}</pre></div>
+<div class="instr"><div class="instr-bar"><b>Terminal</b><button class="copy" data-copy="cd web-voice
+npm install          # pins both SDKs and copies them into vendor/" onclick="copyBtn(this)">Copy</button></div><pre>cd web-voice
+npm install          # pins both SDKs and copies them into vendor/</pre></div>
+<div class="callout note"><div class="callout-tag">ℹ  WHY THIS MATTERS</div><div class="callout-head">Both versions are pinned exactly, and that is deliberate.</div><p>These two bundles are loaded by <code>&lt;script&gt;</code> tag, with no bundler to catch a breaking change. A caret would let a new major arrive on the morning of a workshop and take the lab down for everyone at once, for a reason nobody in the room can debug. Pin them, and move the version on purpose.</p></div><div class="step"><div class="step-num">2</div><div><div class="step-title">Write the page</div><div class="step-text">A status line, a chat area, a text box and a mic button. Plain on purpose.</div></div></div>
+<div class="instr"><div class="instr-bar"><b>index.html</b><button class="copy" data-copy="&lt;!doctype html&gt;
+&lt;html lang=&quot;en&quot;&gt;
+&lt;head&gt;
+  &lt;meta charset=&quot;utf-8&quot;&gt;
+  &lt;title&gt;Amber Line - web desk&lt;/title&gt;
+  &lt;link rel=&quot;stylesheet&quot; href=&quot;style.css&quot;&gt;
+&lt;/head&gt;
+&lt;body&gt;
+  &lt;p id=&quot;status&quot;&gt;connecting...&lt;/p&gt;
+  &lt;div id=&quot;chat&quot;&gt;&lt;/div&gt;
+  &lt;form id=&quot;compose&quot;&gt;
+    &lt;input id=&quot;text&quot; autocomplete=&quot;off&quot; placeholder=&quot;Type, or press the mic&quot;&gt;
+    &lt;button&gt;Send&lt;/button&gt;
+    &lt;button type=&quot;button&quot; id=&quot;mic&quot;&gt;Mic&lt;/button&gt;
+  &lt;/form&gt;
+
+  &lt;!-- both SDKs attach a global: DirectLine and SpeechSDK --&gt;
+  &lt;script src=&quot;vendor/directline.js&quot;&gt;&lt;/script&gt;
+  &lt;script src=&quot;vendor/speech.js&quot;&gt;&lt;/script&gt;
+  &lt;script type=&quot;module&quot; src=&quot;app.js&quot;&gt;&lt;/script&gt;
+&lt;/body&gt;
+&lt;/html&gt;" onclick="copyBtn(this)">Copy</button></div><pre>&lt;!doctype html&gt;
+&lt;html lang=&quot;en&quot;&gt;
+&lt;head&gt;
+  &lt;meta charset=&quot;utf-8&quot;&gt;
+  &lt;title&gt;Amber Line - web desk&lt;/title&gt;
+  &lt;link rel=&quot;stylesheet&quot; href=&quot;style.css&quot;&gt;
+&lt;/head&gt;
+&lt;body&gt;
+  &lt;p id=&quot;status&quot;&gt;connecting...&lt;/p&gt;
+  &lt;div id=&quot;chat&quot;&gt;&lt;/div&gt;
+  &lt;form id=&quot;compose&quot;&gt;
+    &lt;input id=&quot;text&quot; autocomplete=&quot;off&quot; placeholder=&quot;Type, or press the mic&quot;&gt;
+    &lt;button&gt;Send&lt;/button&gt;
+    &lt;button type=&quot;button&quot; id=&quot;mic&quot;&gt;Mic&lt;/button&gt;
+  &lt;/form&gt;
+
+  &lt;!-- both SDKs attach a global: DirectLine and SpeechSDK --&gt;
+  &lt;script src=&quot;vendor/directline.js&quot;&gt;&lt;/script&gt;
+  &lt;script src=&quot;vendor/speech.js&quot;&gt;&lt;/script&gt;
+  &lt;script type=&quot;module&quot; src=&quot;app.js&quot;&gt;&lt;/script&gt;
+&lt;/body&gt;
+&lt;/html&gt;</pre></div>
+<p>And the stylesheet it asks for. Deliberately plain — the lab is about the plumbing, not the page — but a chat that reads as a conversation is worth twelve lines when you show this to someone next week.</p><div class="instr"><div class="instr-bar"><b>style.css</b><button class="copy" data-copy="/* Deliberately plain. The lab is about the plumbing, not the page. */
+body { font-family: &quot;Segoe UI&quot;, system-ui, sans-serif; max-width: 720px; margin: 32px auto; padding: 0 16px; color: #16202E; background: #EEF3F9; }
+#status { font-size: 12px; color: #5A6675; }
+#chat { display: flex; flex-direction: column; gap: 8px; min-height: 300px; margin: 12px 0; }
+#chat div { padding: 8px 12px; border-radius: 10px; max-width: 85%; white-space: pre-wrap; }
+#chat .you { align-self: flex-end; background: #09376E; color: #fff; }
+#chat .agent { align-self: flex-start; background: #fff; border: 1px solid #D6E1EE; }
+#chat .error { align-self: center; background: #FFF4E2; color: #9A6408; }
+#compose { display: flex; gap: 8px; }
+#compose input { flex: 1; padding: 10px; border: 1px solid #D6E1EE; border-radius: 8px; }
+#compose button { padding: 10px 16px; border: 0; border-radius: 8px; background: #2A6FA8; color: #fff; cursor: pointer; }
+#compose #mic { background: #FFBD59; color: #09376E; font-weight: 700; }" onclick="copyBtn(this)">Copy</button></div><pre>/* Deliberately plain. The lab is about the plumbing, not the page. */
+body { font-family: &quot;Segoe UI&quot;, system-ui, sans-serif; max-width: 720px; margin: 32px auto; padding: 0 16px; color: #16202E; background: #EEF3F9; }
+#status { font-size: 12px; color: #5A6675; }
+#chat { display: flex; flex-direction: column; gap: 8px; min-height: 300px; margin: 12px 0; }
+#chat div { padding: 8px 12px; border-radius: 10px; max-width: 85%; white-space: pre-wrap; }
+#chat .you { align-self: flex-end; background: #09376E; color: #fff; }
+#chat .agent { align-self: flex-start; background: #fff; border: 1px solid #D6E1EE; }
+#chat .error { align-self: center; background: #FFF4E2; color: #9A6408; }
+#compose { display: flex; gap: 8px; }
+#compose input { flex: 1; padding: 10px; border: 1px solid #D6E1EE; border-radius: 8px; }
+#compose button { padding: 10px 16px; border: 0; border-radius: 8px; background: #2A6FA8; color: #fff; cursor: pointer; }
+#compose #mic { background: #FFBD59; color: #09376E; font-weight: 700; }</pre></div><div class="step"><div class="step-num">3</div><div><div class="step-title">Write part 1 of app.js — text only</div><div class="step-text">Token from your server, a <code>DirectLine</code> instance, one subscription for replies, one call to send.</div></div></div>
+<div class="instr"><div class="instr-bar"><b>app.js — part 1</b><button class="copy" data-copy="// Baltic Summit 2026 · Talk to the Future · Lab 6 (Scenario E)
+// A Copilot Studio agent on your own page over Direct Line,
+// with speech to text and text to speech from Azure AI Speech.
+// The browser never holds a secret: both tokens come from /api.
+
+// ---------- part 1 · text chat over Direct Line (Lab 6 step 3) ----------
+const chat = document.getElementById(&quot;chat&quot;);
+const statusEl = document.getElementById(&quot;status&quot;);
+const USER = { id: &quot;web-user&quot;, name: &quot;Guest&quot; };
+
+function bubble(who, text) {
+  const d = document.createElement(&quot;div&quot;);
+  d.className = who;
+  d.textContent = `${who}: ${text}`;
+  chat.appendChild(d);
+}
+
+// 1. a short-lived token from YOUR server - never the secret.
+//    Each failure names the setting to look at. An exception thrown out
+//    here would stop the whole module and leave a page that still says
+//    &quot;connecting...&quot; and does nothing at all - no mic, no text box.
+async function directLineToken() {
+  let r;
+  try {
+    r = await fetch(&quot;/api/directline/token&quot;, { method: &quot;POST&quot; });
+  } catch {
+    throw new Error(&quot;/api is not answering - is `npm start` still running?&quot;);
+  }
+  if (r.status === 404) {
+    throw new Error(&quot;/api/directline/token is 404 - start it with `swa start . --api-location api`&quot;);
+  }
+  if (!r.ok) {
+    throw new Error(`/api/directline/token returned ${r.status} - check DIRECTLINE_SECRET in api/local.settings.json`);
+  }
+  const body = await r.json().catch(() =&gt; ({}));
+  if (!body.token) {
+    throw new Error(&quot;/api/directline/token returned no token - check api/local.settings.json&quot;);
+  }
+  return body.token;
+}
+
+// 2. the SDK opens the conversation (WebSocket by default)
+//    NOTE: the bundle exposes a namespace, so it is DirectLine.DirectLine
+let dl = null;
+try {
+  dl = new DirectLine.DirectLine({ token: await directLineToken() });
+} catch (err) {
+  statusEl.textContent = &quot;not connected&quot;;
+  bubble(&quot;error&quot;, err.message);
+  console.error(err);
+}
+
+if (dl) {
+  // 3. connection state: 0 uninitialised ... 2 online ... 5 ended
+  const STATES = [&quot;uninitialised&quot;, &quot;connecting&quot;, &quot;online&quot;,
+                  &quot;token expired&quot;, &quot;failed to connect&quot;, &quot;ended&quot;];
+  dl.connectionStatus$.subscribe(s =&gt; { statusEl.textContent = STATES[s]; });
+
+  // 4. every activity arrives here - including your own messages
+  dl.activity$.subscribe(
+    a =&gt; {
+      if (a.from.id === USER.id) return;               // your echo
+      if (a.type === &quot;message&quot; &amp;&amp; a.text) onAgentReply(a.text);
+    },
+    err =&gt; bubble(&quot;error&quot;, `connection: ${err.message || err}`)
+  );
+
+  // 5. ask Copilot Studio to run its greeting topic
+  dl.postActivity({ from: USER, type: &quot;event&quot;, name: &quot;startConversation&quot; })
+    .subscribe({ error: e =&gt; console.warn(&quot;greeting failed&quot;, e) });
+}
+
+// 6. send what the user typed
+function send(text) {
+  if (!dl) { bubble(&quot;error&quot;, &quot;not connected - fix the token route and reload&quot;); return; }
+  bubble(&quot;you&quot;, text);
+  dl.postActivity({ from: USER, type: &quot;message&quot;, text })
+    .subscribe({ error: e =&gt; bubble(&quot;error&quot;, e.message) });
+}
+
+document.getElementById(&quot;compose&quot;).addEventListener(&quot;submit&quot;, e =&gt; {
+  e.preventDefault();
+  const box = document.getElementById(&quot;text&quot;);
+  if (box.value.trim()) send(box.value.trim());
+  box.value = &quot;&quot;;
+});" onclick="copyBtn(this)">Copy</button></div><pre>// Baltic Summit 2026 · Talk to the Future · Lab 6 (Scenario E)
+// A Copilot Studio agent on your own page over Direct Line,
+// with speech to text and text to speech from Azure AI Speech.
+// The browser never holds a secret: both tokens come from /api.
+
+// ---------- part 1 · text chat over Direct Line (Lab 6 step 3) ----------
+const chat = document.getElementById(&quot;chat&quot;);
+const statusEl = document.getElementById(&quot;status&quot;);
+const USER = { id: &quot;web-user&quot;, name: &quot;Guest&quot; };
+
+function bubble(who, text) {
+  const d = document.createElement(&quot;div&quot;);
+  d.className = who;
+  d.textContent = `${who}: ${text}`;
+  chat.appendChild(d);
+}
+
+// 1. a short-lived token from YOUR server - never the secret.
+//    Each failure names the setting to look at. An exception thrown out
+//    here would stop the whole module and leave a page that still says
+//    &quot;connecting...&quot; and does nothing at all - no mic, no text box.
+async function directLineToken() {
+  let r;
+  try {
+    r = await fetch(&quot;/api/directline/token&quot;, { method: &quot;POST&quot; });
+  } catch {
+    throw new Error(&quot;/api is not answering - is `npm start` still running?&quot;);
+  }
+  if (r.status === 404) {
+    throw new Error(&quot;/api/directline/token is 404 - start it with `swa start . --api-location api`&quot;);
+  }
+  if (!r.ok) {
+    throw new Error(`/api/directline/token returned ${r.status} - check DIRECTLINE_SECRET in api/local.settings.json`);
+  }
+  const body = await r.json().catch(() =&gt; ({}));
+  if (!body.token) {
+    throw new Error(&quot;/api/directline/token returned no token - check api/local.settings.json&quot;);
+  }
+  return body.token;
+}
+
+// 2. the SDK opens the conversation (WebSocket by default)
+//    NOTE: the bundle exposes a namespace, so it is DirectLine.DirectLine
+let dl = null;
+try {
+  dl = new DirectLine.DirectLine({ token: await directLineToken() });
+} catch (err) {
+  statusEl.textContent = &quot;not connected&quot;;
+  bubble(&quot;error&quot;, err.message);
+  console.error(err);
+}
+
+if (dl) {
+  // 3. connection state: 0 uninitialised ... 2 online ... 5 ended
+  const STATES = [&quot;uninitialised&quot;, &quot;connecting&quot;, &quot;online&quot;,
+                  &quot;token expired&quot;, &quot;failed to connect&quot;, &quot;ended&quot;];
+  dl.connectionStatus$.subscribe(s =&gt; { statusEl.textContent = STATES[s]; });
+
+  // 4. every activity arrives here - including your own messages
+  dl.activity$.subscribe(
+    a =&gt; {
+      if (a.from.id === USER.id) return;               // your echo
+      if (a.type === &quot;message&quot; &amp;&amp; a.text) onAgentReply(a.text);
+    },
+    err =&gt; bubble(&quot;error&quot;, `connection: ${err.message || err}`)
+  );
+
+  // 5. ask Copilot Studio to run its greeting topic
+  dl.postActivity({ from: USER, type: &quot;event&quot;, name: &quot;startConversation&quot; })
+    .subscribe({ error: e =&gt; console.warn(&quot;greeting failed&quot;, e) });
+}
+
+// 6. send what the user typed
+function send(text) {
+  if (!dl) { bubble(&quot;error&quot;, &quot;not connected - fix the token route and reload&quot;); return; }
+  bubble(&quot;you&quot;, text);
+  dl.postActivity({ from: USER, type: &quot;message&quot;, text })
+    .subscribe({ error: e =&gt; bubble(&quot;error&quot;, e.message) });
+}
+
+document.getElementById(&quot;compose&quot;).addEventListener(&quot;submit&quot;, e =&gt; {
+  e.preventDefault();
+  const box = document.getElementById(&quot;text&quot;);
+  if (box.value.trim()) send(box.value.trim());
+  box.value = &quot;&quot;;
+});</pre></div>
+<div class="callout warn"><div class="callout-tag">⚠  WATCH OUT</div><div class="callout-head">Two things that eat the first twenty minutes.</div><p><b>The bundle exposes a namespace.</b> It is <code>new DirectLine.DirectLine({ token })</code>, not <code>new DirectLine({ token })</code>. The second one throws “DirectLine is not a constructor”.</p><p><b>Your own messages come back on the same stream.</b> Without the <code>from.id</code> check, every message you send appears twice — and in step 6, the agent would answer your own question back to you.</p></div>
+<div class="callout note"><div class="callout-tag">ℹ  WHY THIS MATTERS</div><div class="callout-head">Why the token fetch is eight lines and not one.</div><p>That <code>await</code> is at the top level of a module. If it throws — a wrong secret, a route you have not started, a 500 with no body to parse — module evaluation stops <b>there</b>, and every line below it never runs. No submit handler, no mic button, no error. The page sits on “connecting…” looking like a network problem, and you go and check your network.</p><p>So each failure is caught and named after the setting behind it, and the page says so out loud. It is the single most useful thing in this file, and you will know within one minute which of the three strings from step 2 you got wrong.</p></div><div class="step"><div class="step-num">4</div><div><div class="step-title">Open the page and type a question</div><div class="step-text">Browse to <b>http://localhost:4280</b>. Type the first utterance from pack E.</div></div></div>
+<div class="callout expect"><div class="callout-tag">✓  YOU SHOULD SEE</div><div class="callout-head">“online” in the status line, then the agent's answer under yours.</div><p>It is the same answer as the Copilot Studio test pane. If instead you get <i>not connected</i> and an orange line, read it: it names the route, the status code and the setting to fix. <i>failed to connect</i> is a different animal — the token was fine and Direct Line refused it, or a WebSocket is blocked on this network.</p></div>
+<div class="callout note"><div class="callout-tag">ℹ  WHY THIS MATTERS</div><div class="callout-head">Rejoin marker.</div><p>If you only get this far, you have a Copilot Studio agent on your own page with no secret in the browser. Everything after this is the voice.</p></div>
+<h2 id="step-4-ears-speech-to-text">Step 4 · Ears: speech to text<a class="anchor" href="#step-4-ears-speech-to-text">¶</a></h2>
+<p>The browser streams the microphone to Azure AI Speech directly, with a 10-minute token. Your server never hears a word.</p>
+<div class="instr"><div class="instr-bar"><b>app.js — part 2</b><button class="copy" data-copy="// ---------- part 2 · ears: speech to text (Lab 6 step 4) ----------
+let speechToken = &quot;&quot;, speechRegion = &quot;&quot;, speechExpiry = 0;
+
+async function speechConfig() {
+  if (Date.now() &gt; speechExpiry) {            // tokens last 10 minutes
+    const res = await fetch(&quot;/api/speech/token&quot;, { method: &quot;POST&quot; });
+    const r = res.ok ? await res.json().catch(() =&gt; ({})) : {};
+    if (!r.token) {
+      const e = new Error(`/api/speech/token returned ${res.status} - check SPEECH_KEY and SPEECH_REGION in api/local.settings.json`);
+      e.setup = true;        // a settings problem, not a failed utterance
+      throw e;
+    }
+    speechToken = r.token;
+    speechRegion = r.region;
+    speechExpiry = Date.now() + r.expires_in * 1000;
+  }
+  const cfg = SpeechSDK.SpeechConfig.fromAuthorizationToken(
+    speechToken, speechRegion);
+  // how much silence ends a phrase - the setting you tune in step 4
+  cfg.setProperty(SpeechSDK.PropertyId.Speech_SegmentationSilenceTimeoutMs, &quot;800&quot;);
+  return cfg;
+}
+
+// at most FOUR candidates for at-start language detection
+const LANGS = SpeechSDK.AutoDetectSourceLanguageConfig
+  .fromLanguages([&quot;en-US&quot;, &quot;pl-PL&quot;]);
+
+function mic() { return SpeechSDK.AudioConfig.fromDefaultMicrophoneInput(); }
+
+async function listen() {
+  const rec = SpeechSDK.SpeechRecognizer.FromConfig(
+    await speechConfig(), LANGS, mic());
+  return new Promise((resolve, reject) =&gt; {
+    rec.recognizeOnceAsync(result =&gt; {
+      rec.close();
+      if (result.reason !== SpeechSDK.ResultReason.RecognizedSpeech) {
+        return reject(new Error(&quot;nothing recognised&quot;));
+      }
+      const lang = SpeechSDK.AutoDetectSourceLanguageResult
+        .fromResult(result).language;
+      console.log(&quot;HEARD:&quot;, lang, result.text);
+      resolve({ text: result.text, lang });
+    }, err =&gt; { rec.close(); reject(new Error(err)); });
+  });
+}" onclick="copyBtn(this)">Copy</button></div><pre>// ---------- part 2 · ears: speech to text (Lab 6 step 4) ----------
+let speechToken = &quot;&quot;, speechRegion = &quot;&quot;, speechExpiry = 0;
+
+async function speechConfig() {
+  if (Date.now() &gt; speechExpiry) {            // tokens last 10 minutes
+    const res = await fetch(&quot;/api/speech/token&quot;, { method: &quot;POST&quot; });
+    const r = res.ok ? await res.json().catch(() =&gt; ({})) : {};
+    if (!r.token) {
+      const e = new Error(`/api/speech/token returned ${res.status} - check SPEECH_KEY and SPEECH_REGION in api/local.settings.json`);
+      e.setup = true;        // a settings problem, not a failed utterance
+      throw e;
+    }
+    speechToken = r.token;
+    speechRegion = r.region;
+    speechExpiry = Date.now() + r.expires_in * 1000;
+  }
+  const cfg = SpeechSDK.SpeechConfig.fromAuthorizationToken(
+    speechToken, speechRegion);
+  // how much silence ends a phrase - the setting you tune in step 4
+  cfg.setProperty(SpeechSDK.PropertyId.Speech_SegmentationSilenceTimeoutMs, &quot;800&quot;);
+  return cfg;
+}
+
+// at most FOUR candidates for at-start language detection
+const LANGS = SpeechSDK.AutoDetectSourceLanguageConfig
+  .fromLanguages([&quot;en-US&quot;, &quot;pl-PL&quot;]);
+
+function mic() { return SpeechSDK.AudioConfig.fromDefaultMicrophoneInput(); }
+
+async function listen() {
+  const rec = SpeechSDK.SpeechRecognizer.FromConfig(
+    await speechConfig(), LANGS, mic());
+  return new Promise((resolve, reject) =&gt; {
+    rec.recognizeOnceAsync(result =&gt; {
+      rec.close();
+      if (result.reason !== SpeechSDK.ResultReason.RecognizedSpeech) {
+        return reject(new Error(&quot;nothing recognised&quot;));
+      }
+      const lang = SpeechSDK.AutoDetectSourceLanguageResult
+        .fromResult(result).language;
+      console.log(&quot;HEARD:&quot;, lang, result.text);
+      resolve({ text: result.text, lang });
+    }, err =&gt; { rec.close(); reject(new Error(err)); });
+  });
+}</pre></div>
+<div class="step"><div class="step-num">1</div><div><div class="step-title">Test it from the console before wiring a button</div><div class="step-text">Open the browser console and run <code>await listen()</code>, then say the first utterance.</div></div></div>
+<div class="callout expect"><div class="callout-tag">✓  YOU SHOULD SEE</div><div class="callout-head"><code>HEARD: en-US What time is the morning ferry to Karlskrona?</code></div><p>Now say utterance 3, in Polish. You should see <code>pl-PL</code>. If you see <code>en-US</code> and a mangled sentence, your candidate list is missing Polish.</p></div>
+<div class="callout warn"><div class="callout-tag">⚠  WATCH OUT</div><div class="callout-head">Language detection picks from your list, and only from your list.</div><p>At-start detection takes <b>at most four</b> candidate languages. A Ukrainian speaker on an <code>en-US</code> / <code>pl-PL</code> list is transcribed as one of those two, badly — and nothing tells you. Choose the four your visitors actually speak.</p></div>
+<div class="step"><div class="step-num">2</div><div><div class="step-title">Tune the silence, with your own voice</div><div class="step-text">This is the Lab 2 setting under a different name. Change one value, say all three sentences from pack E, repeat.</div></div></div>
+<div class="tablewrap"><table class="grid"><thead><tr><th>Try</th><th>Speech_SegmentationSilenceTimeoutMs</th><th>What you should feel</th></tr></thead><tbody><tr><td>The service default</td><td>500</td><td>Quick — and it sends half a sentence when you stop to think</td></tr><tr><td>The value in this guide</td><td>800</td><td>Waits through a short pause, still feels alive</td></tr><tr><td>Too long</td><td>2000</td><td>Dead air. The page looks frozen</td></tr><tr><td>The documented range</td><td>100 – 5000</td><td>Anything outside it is rejected</td></tr></tbody></table></div>
+<div class="tablewrap"><table class="grid"><thead><tr><th>Type</th><th>Say this after every change</th></tr></thead><tbody><tr><td>Short</td><td><i>“What time is the morning ferry?”</i></td></tr><tr><td>With a thinking pause</td><td><i>“I want to travel... maybe the twenty-first... with the car I think.”</i></td></tr><tr><td>With an identifier in it</td><td><i>“The booking reference is A L six six two four.”</i></td></tr></tbody></table></div>
+<div class="callout note"><div class="callout-tag">ℹ  WHY THIS MATTERS</div><div class="callout-head">Notice how different this knob is from Lab 2.</div><p><code>silence_duration_ms</code> in Lab 2 decided when the <i>model</i> answers. This one decides when a <i>transcript</i> is final. The agent is not even involved yet — which is exactly the extra hop.</p></div>
+<h2 id="step-5-a-mouth-text-to-speech">Step 5 · A mouth: text to speech<a class="anchor" href="#step-5-a-mouth-text-to-speech">¶</a></h2>
+<div class="instr"><div class="instr-bar"><b>app.js — part 3</b><button class="copy" data-copy="// ---------- part 3 · mouth: text to speech (Lab 6 step 5) ----------
+const VOICES = {
+  &quot;en-US&quot;: &quot;en-US-AvaMultilingualNeural&quot;,
+  &quot;pl-PL&quot;: &quot;pl-PL-AgnieszkaNeural&quot;
+};
+let player = null;      // module scope - step 7 needs to pause it
+let endSpeech = null;
+
+async function speak(text, lang = &quot;en-US&quot;) {
+  const cfg = await speechConfig();
+  cfg.speechSynthesisVoiceName = VOICES[lang] || VOICES[&quot;en-US&quot;];
+  player = new SpeechSDK.SpeakerAudioDestination();
+  const synth = new SpeechSDK.SpeechSynthesizer(
+    cfg, SpeechSDK.AudioConfig.fromSpeakerOutput(player));
+  console.log(&quot;SAID :&quot;, lang, text);
+  return new Promise(resolve =&gt; {
+    endSpeech = resolve;
+    player.onAudioEnd = () =&gt; { endSpeech = null; resolve(); };
+    synth.speakTextAsync(text,
+      () =&gt; synth.close(),
+      err =&gt; { synth.close(); console.warn(err); resolve(); });
+  });
+}
+
+function stopSpeaking() {
+  if (player) { player.pause(); player.close(); player = null; }
+  if (endSpeech) { endSpeech(); endSpeech = null; }
+}" onclick="copyBtn(this)">Copy</button></div><pre>// ---------- part 3 · mouth: text to speech (Lab 6 step 5) ----------
+const VOICES = {
+  &quot;en-US&quot;: &quot;en-US-AvaMultilingualNeural&quot;,
+  &quot;pl-PL&quot;: &quot;pl-PL-AgnieszkaNeural&quot;
+};
+let player = null;      // module scope - step 7 needs to pause it
+let endSpeech = null;
+
+async function speak(text, lang = &quot;en-US&quot;) {
+  const cfg = await speechConfig();
+  cfg.speechSynthesisVoiceName = VOICES[lang] || VOICES[&quot;en-US&quot;];
+  player = new SpeechSDK.SpeakerAudioDestination();
+  const synth = new SpeechSDK.SpeechSynthesizer(
+    cfg, SpeechSDK.AudioConfig.fromSpeakerOutput(player));
+  console.log(&quot;SAID :&quot;, lang, text);
+  return new Promise(resolve =&gt; {
+    endSpeech = resolve;
+    player.onAudioEnd = () =&gt; { endSpeech = null; resolve(); };
+    synth.speakTextAsync(text,
+      () =&gt; synth.close(),
+      err =&gt; { synth.close(); console.warn(err); resolve(); });
+  });
+}
+
+function stopSpeaking() {
+  if (player) { player.pause(); player.close(); player = null; }
+  if (endSpeech) { endSpeech(); endSpeech = null; }
+}</pre></div>
+<div class="step"><div class="step-num">1</div><div><div class="step-title">Test it from the console</div><div class="step-text"><code>await speak("Hello from Gdynia")</code>, then <code>await speak("Dzień dobry z Gdyni", "pl-PL")</code>.</div></div></div>
+<div class="callout warn"><div class="callout-tag">⚠  WATCH OUT</div><div class="callout-head">Nothing plays until the page has had a click.</div><p>Browsers block audio that starts without a user gesture. From the console you may already have one; from a fresh page load you will not. The mic button in step 6 is that gesture — do not try to speak a greeting on page load.</p></div>
+<div class="callout note"><div class="callout-tag">ℹ  WHY THIS MATTERS</div><div class="callout-head">Why SpeakerAudioDestination and not the default speaker.</div><p>It gives you a player object you can <code>pause()</code>. Closing the synthesizer does not stop audio that has already arrived. Step 7 depends on this, so the player lives at module scope — the same lesson as <code>audioEl</code> in Lab 1.</p></div>
+<p>Pick voices the way Lab 2 taught: at your visitors' volume, with real background noise, and never change them after go-live. <code>en-US-AvaMultilingualNeural</code> is a multilingual voice; the Polish voices are <span class="pill">pl-PL-AgnieszkaNeural</span><span class="pill">pl-PL-MarekNeural</span><span class="pill">pl-PL-ZofiaNeural</span></p>
+<h2 id="step-6-make-it-speakable-then-close-the-loop">Step 6 · Make it speakable, then close the loop<a class="anchor" href="#step-6-make-it-speakable-then-close-the-loop">¶</a></h2>
+<p>The agent writes for a screen: links, lists, reference markers, sometimes a table. The screen should keep all of it. The ear should get two sentences.</p>
+<div class="instr"><div class="instr-bar"><b>app.js — speakable()</b><button class="copy" data-copy="// ---------- part 4 · speakable text (Lab 6 step 6) ----------
+// what the screen shows is not what the ear should get
+const MORE = {
+  &quot;en-US&quot;: &quot; The rest is on your screen.&quot;,
+  &quot;pl-PL&quot;: &quot; Resztę widać na ekranie.&quot;
+};
+
+function speakable(raw, lang = &quot;en-US&quot;) {
+  const clean = raw
+    .replace(/\s*\[\d+\]/g, &quot;&quot;)                // reference markers [1]
+    .replace(/!\[[^\]]*\]\([^)]+\)/g, &quot;&quot;)       // images
+    .replace(/\[([^\]]+)\]\([^)]+\)/g, &quot;$1&quot;)     // links -&gt; their label
+    .replace(/https?:\/\/\S+/g, &quot;&quot;)              // bare URLs
+    .replace(/^\s*\|.*\|\s*$/gm, &quot;&quot;)             // table rows
+    .replace(/\|/g, &quot; &quot;)                         // a pipe left inline with prose
+    .replace(/[*_`#&gt;]+/g, &quot;&quot;)                    // markdown symbols
+    .replace(/\s+/g, &quot; &quot;).trim();
+  const sentences = clean.match(/[^.!?]+[.!?]+/g) || [clean];
+  const said = sentences.slice(0, 2).map(x =&gt; x.trim()).join(&quot; &quot;);
+  return sentences.length &gt; 2 ? said + (MORE[lang] || MORE[&quot;en-US&quot;]) : said;
+}" onclick="copyBtn(this)">Copy</button></div><pre>// ---------- part 4 · speakable text (Lab 6 step 6) ----------
+// what the screen shows is not what the ear should get
+const MORE = {
+  &quot;en-US&quot;: &quot; The rest is on your screen.&quot;,
+  &quot;pl-PL&quot;: &quot; Resztę widać na ekranie.&quot;
+};
+
+function speakable(raw, lang = &quot;en-US&quot;) {
+  const clean = raw
+    .replace(/\s*\[\d+\]/g, &quot;&quot;)                // reference markers [1]
+    .replace(/!\[[^\]]*\]\([^)]+\)/g, &quot;&quot;)       // images
+    .replace(/\[([^\]]+)\]\([^)]+\)/g, &quot;$1&quot;)     // links -&gt; their label
+    .replace(/https?:\/\/\S+/g, &quot;&quot;)              // bare URLs
+    .replace(/^\s*\|.*\|\s*$/gm, &quot;&quot;)             // table rows
+    .replace(/\|/g, &quot; &quot;)                         // a pipe left inline with prose
+    .replace(/[*_`#&gt;]+/g, &quot;&quot;)                    // markdown symbols
+    .replace(/\s+/g, &quot; &quot;).trim();
+  const sentences = clean.match(/[^.!?]+[.!?]+/g) || [clean];
+  const said = sentences.slice(0, 2).map(x =&gt; x.trim()).join(&quot; &quot;);
+  return sentences.length &gt; 2 ? said + (MORE[lang] || MORE[&quot;en-US&quot;]) : said;
+}</pre></div>
+<div class="instr"><div class="instr-bar"><b>app.js — part 4</b><button class="copy" data-copy="// ---------- part 5 · the voice loop (Lab 6 step 6) ----------
+let voiceOn = false;
+let pendingReply = null;
+
+// Copilot Studio often answers one question with two messages: a filler
+// (&quot;let me check...&quot;) and then the answer. Speaking only the first one
+// loses the answer altogether, so whatever arrives after it is queued and
+// spoken too, in order. Queueing rather than waiting costs no latency on
+// the common single-message reply.
+let replyQueue = [];
+// After the last reply is spoken, a straggler gets this long to turn up.
+// Deliberately short: this delay sits between the agent finishing and the
+// microphone opening, so a long one clips the start of the next question.
+const REPLY_GRACE_MS = 250;
+
+function onAgentReply(text) {
+  bubble(&quot;agent&quot;, text);                      // the screen gets it all
+  if (pendingReply) { const resolve = pendingReply; pendingReply = null; resolve(text); }
+  else if (voiceOn) replyQueue.push(text);    // arrived while we were speaking
+}
+
+function ask(text) {
+  replyQueue = [];
+  return new Promise(resolve =&gt; { pendingReply = resolve; send(text); });
+}
+
+// the next queued reply, or null if none turns up within the grace window
+function nextQueuedReply() {
+  if (replyQueue.length) return Promise.resolve(replyQueue.shift());
+  return new Promise(resolve =&gt; {
+    const poll = setInterval(() =&gt; {
+      if (!replyQueue.length) return;
+      clearInterval(poll); clearTimeout(giveUp);
+      resolve(replyQueue.shift());
+    }, 50);
+    const giveUp = setTimeout(() =&gt; { clearInterval(poll); resolve(null); }, REPLY_GRACE_MS);
+  });
+}
+
+const micButton = document.getElementById(&quot;mic&quot;);
+
+function setVoice(on) {                       // so the room can see the state
+  voiceOn = on;
+  micButton.textContent = on ? &quot;Stop&quot; : &quot;Mic&quot;;
+  micButton.setAttribute(&quot;aria-pressed&quot;, String(on));
+}
+
+micButton.addEventListener(&quot;click&quot;, () =&gt; {
+  setVoice(!voiceOn);                         // the click also unlocks audio
+  if (voiceOn) voiceTurn(); else stopSpeaking();
+});" onclick="copyBtn(this)">Copy</button></div><pre>// ---------- part 5 · the voice loop (Lab 6 step 6) ----------
+let voiceOn = false;
+let pendingReply = null;
+
+// Copilot Studio often answers one question with two messages: a filler
+// (&quot;let me check...&quot;) and then the answer. Speaking only the first one
+// loses the answer altogether, so whatever arrives after it is queued and
+// spoken too, in order. Queueing rather than waiting costs no latency on
+// the common single-message reply.
+let replyQueue = [];
+// After the last reply is spoken, a straggler gets this long to turn up.
+// Deliberately short: this delay sits between the agent finishing and the
+// microphone opening, so a long one clips the start of the next question.
+const REPLY_GRACE_MS = 250;
+
+function onAgentReply(text) {
+  bubble(&quot;agent&quot;, text);                      // the screen gets it all
+  if (pendingReply) { const resolve = pendingReply; pendingReply = null; resolve(text); }
+  else if (voiceOn) replyQueue.push(text);    // arrived while we were speaking
+}
+
+function ask(text) {
+  replyQueue = [];
+  return new Promise(resolve =&gt; { pendingReply = resolve; send(text); });
+}
+
+// the next queued reply, or null if none turns up within the grace window
+function nextQueuedReply() {
+  if (replyQueue.length) return Promise.resolve(replyQueue.shift());
+  return new Promise(resolve =&gt; {
+    const poll = setInterval(() =&gt; {
+      if (!replyQueue.length) return;
+      clearInterval(poll); clearTimeout(giveUp);
+      resolve(replyQueue.shift());
+    }, 50);
+    const giveUp = setTimeout(() =&gt; { clearInterval(poll); resolve(null); }, REPLY_GRACE_MS);
+  });
+}
+
+const micButton = document.getElementById(&quot;mic&quot;);
+
+function setVoice(on) {                       // so the room can see the state
+  voiceOn = on;
+  micButton.textContent = on ? &quot;Stop&quot; : &quot;Mic&quot;;
+  micButton.setAttribute(&quot;aria-pressed&quot;, String(on));
+}
+
+micButton.addEventListener(&quot;click&quot;, () =&gt; {
+  setVoice(!voiceOn);                         // the click also unlocks audio
+  if (voiceOn) voiceTurn(); else stopSpeaking();
+});</pre></div>
+<p>And the loop that drives it. This one has no barge-in yet — step 7 throws it away — so it is the shortest thing that gets you a working conversation.</p><div class="instr"><div class="instr-bar"><b>app.js — the loop, version one</b><button class="copy" data-copy="// the voice loop - version one, replaced in step 7
+async function voiceTurn() {
+  while (voiceOn) {
+    let heard;
+    try { heard = await listen(); }
+    catch (err) {
+      if (err.setup) bubble(&quot;error&quot;, err.message);
+      else statusEl.textContent = &quot;did not catch that - press the mic&quot;;
+      setVoice(false); break;
+    }
+    // speak the reply, then anything the agent adds after it
+    let reply = await ask(heard.text);
+    while (reply !== null &amp;&amp; voiceOn) {
+      await speak(speakable(reply, heard.lang), heard.lang);
+      reply = await nextQueuedReply();
+    }
+  }
+}" onclick="copyBtn(this)">Copy</button></div><pre>// the voice loop - version one, replaced in step 7
+async function voiceTurn() {
+  while (voiceOn) {
+    let heard;
+    try { heard = await listen(); }
+    catch (err) {
+      if (err.setup) bubble(&quot;error&quot;, err.message);
+      else statusEl.textContent = &quot;did not catch that - press the mic&quot;;
+      setVoice(false); break;
+    }
+    // speak the reply, then anything the agent adds after it
+    let reply = await ask(heard.text);
+    while (reply !== null &amp;&amp; voiceOn) {
+      await speak(speakable(reply, heard.lang), heard.lang);
+      reply = await nextQueuedReply();
+    }
+  }
+}</pre></div><div class="step"><div class="step-num">1</div><div><div class="step-title">Press the mic and ask utterance 2</div><div class="step-text"><i>“Tell me everything about travelling with a pet.”</i></div></div></div>
+<div class="callout expect"><div class="callout-tag">✓  YOU SHOULD SEE</div><div class="callout-head">The full answer on screen, two sentences out loud, then “The rest is on your screen.”</div><p>Then it listens again on its own. Press the mic a second time to stop the loop.</p></div>
+<div class="callout note"><div class="callout-tag">ℹ  WHY THIS MATTERS</div><div class="callout-head">The agent often sends two messages for one question, and the naive loop loses the answer.</div><p>A “let me check” line, then the answer. Resolve on the first message and you speak the filler and <b>never</b> the answer — it lands on the screen while the page is already listening again. That is why <code>onAgentReply</code> queues anything that arrives after the one being waited for, and the loop keeps speaking until the queue runs dry.</p><p>Queueing rather than waiting is the whole point. The obvious fix — hold the first message for a second in case a second one follows — taxes <i>every</i> turn, including the usual single-message reply, and this lab is about latency you can hear. <code>REPLY_GRACE_MS</code> is 250 for the same reason: it sits between the agent finishing and the microphone opening, so a generous value clips the start of the next question.</p></div>
+<h2 id="step-7-barge-in-built-by-hand">Step 7 · Barge-in, built by hand<a class="anchor" href="#step-7-barge-in-built-by-hand">¶</a></h2>
+<div class="callout note"><div class="callout-tag">ℹ  WHY THIS MATTERS</div><div class="callout-head">In Labs 1–4 the model was still listening while it spoke. Here, nothing is.</div><p>The recognizer is closed while the agent talks, so an interruption goes nowhere. You fix that by running a <b>second recognizer</b> for as long as the audio plays, and pausing the player the moment it hears two words.</p></div>
+<div class="instr"><div class="instr-bar"><b>app.js — part 5</b><button class="copy" data-copy="// ---------- part 6 · barge-in (Lab 6 step 7) ----------
+const wait = ms =&gt; new Promise(r =&gt; setTimeout(() =&gt; r(null), ms));
+
+async function speakInterruptibly(text, lang) {
+  // a second recognizer listens WHILE the agent speaks
+  const watcher = SpeechSDK.SpeechRecognizer.FromConfig(
+    await speechConfig(), LANGS, mic());
+  let cut = false;
+
+  watcher.recognizing = (_, e) =&gt; {
+    // two words, not one - a cough should not stop the agent
+    if (!cut &amp;&amp; e.result.text.trim().split(/\s+/).length &gt;= 2) {
+      cut = true;
+      console.log(&quot;BARGE-IN&quot;);
+      stopSpeaking();                         // pause the player NOW
+    }
+  };
+  const said = new Promise(resolve =&gt; {
+    watcher.recognized = (_, e) =&gt; {
+      if (e.result.reason !== SpeechSDK.ResultReason.RecognizedSpeech) return;
+      const lang = SpeechSDK.AutoDetectSourceLanguageResult
+        .fromResult(e.result).language;
+      resolve({ text: e.result.text, lang });
+    };
+  });
+
+  watcher.startContinuousRecognitionAsync();
+  await speak(text, lang);
+  const next = cut ? await Promise.race([said, wait(4000)]) : null;
+  watcher.stopContinuousRecognitionAsync(() =&gt; watcher.close());
+  return next;          // what the user said over the agent, if anything
+}" onclick="copyBtn(this)">Copy</button></div><pre>// ---------- part 6 · barge-in (Lab 6 step 7) ----------
+const wait = ms =&gt; new Promise(r =&gt; setTimeout(() =&gt; r(null), ms));
+
+async function speakInterruptibly(text, lang) {
+  // a second recognizer listens WHILE the agent speaks
+  const watcher = SpeechSDK.SpeechRecognizer.FromConfig(
+    await speechConfig(), LANGS, mic());
+  let cut = false;
+
+  watcher.recognizing = (_, e) =&gt; {
+    // two words, not one - a cough should not stop the agent
+    if (!cut &amp;&amp; e.result.text.trim().split(/\s+/).length &gt;= 2) {
+      cut = true;
+      console.log(&quot;BARGE-IN&quot;);
+      stopSpeaking();                         // pause the player NOW
+    }
+  };
+  const said = new Promise(resolve =&gt; {
+    watcher.recognized = (_, e) =&gt; {
+      if (e.result.reason !== SpeechSDK.ResultReason.RecognizedSpeech) return;
+      const lang = SpeechSDK.AutoDetectSourceLanguageResult
+        .fromResult(e.result).language;
+      resolve({ text: e.result.text, lang });
+    };
+  });
+
+  watcher.startContinuousRecognitionAsync();
+  await speak(text, lang);
+  const next = cut ? await Promise.race([said, wait(4000)]) : null;
+  watcher.stopContinuousRecognitionAsync(() =&gt; watcher.close());
+  return next;          // what the user said over the agent, if anything
+}</pre></div>
+<p><b>Now delete the loop you wrote in step 6</b> and put this at the end of the file, below <code>speakInterruptibly</code>. Same job, three differences: an interruption comes back as the next question instead of being thrown away, the whole loop is wrapped so a token route that fails mid-conversation stops it cleanly rather than leaving the button saying <i>Stop</i>, and <code>err.setup</code> separates a bad key from a quiet room.</p><div class="instr"><div class="instr-bar"><b>app.js — replace voiceTurn</b><button class="copy" data-copy="// the voice loop - an interruption becomes the next question
+async function voiceTurn() {
+  let next = null;
+  try {
+    while (voiceOn) {
+      let heard = next;
+      next = null;
+      if (!heard) {
+        try { heard = await listen(); }
+        catch (err) {
+          if (err.setup) throw err;   // a bad key is not a quiet room - say so
+          statusEl.textContent = &quot;did not catch that - press the mic&quot;;
+          setVoice(false); break;
+        }
+      }
+      // speak the reply, then anything the agent adds after it
+      let reply = await ask(heard.text);
+      while (reply !== null &amp;&amp; voiceOn &amp;&amp; !next) {
+        next = await speakInterruptibly(speakable(reply, heard.lang), heard.lang);
+        reply = next ? null : await nextQueuedReply();
+      }
+    }
+  } catch (err) {
+    // anything the loop could not recover from: a token route, a closed
+    // recognizer. Stop cleanly rather than leaving the button saying &quot;Stop&quot;.
+    statusEl.textContent = &quot;voice stopped&quot;;
+    bubble(&quot;error&quot;, err.message);
+    setVoice(false);
+  }
+}" onclick="copyBtn(this)">Copy</button></div><pre>// the voice loop - an interruption becomes the next question
+async function voiceTurn() {
+  let next = null;
+  try {
+    while (voiceOn) {
+      let heard = next;
+      next = null;
+      if (!heard) {
+        try { heard = await listen(); }
+        catch (err) {
+          if (err.setup) throw err;   // a bad key is not a quiet room - say so
+          statusEl.textContent = &quot;did not catch that - press the mic&quot;;
+          setVoice(false); break;
+        }
+      }
+      // speak the reply, then anything the agent adds after it
+      let reply = await ask(heard.text);
+      while (reply !== null &amp;&amp; voiceOn &amp;&amp; !next) {
+        next = await speakInterruptibly(speakable(reply, heard.lang), heard.lang);
+        reply = next ? null : await nextQueuedReply();
+      }
+    }
+  } catch (err) {
+    // anything the loop could not recover from: a token route, a closed
+    // recognizer. Stop cleanly rather than leaving the button saying &quot;Stop&quot;.
+    statusEl.textContent = &quot;voice stopped&quot;;
+    bubble(&quot;error&quot;, err.message);
+    setVoice(false);
+  }
+}</pre></div>
+<div class="callout prompt"><div class="callout-tag">💬  SAY THIS OUT LOUD</div><div class="callout-head">Try this exact sequence</div><p>You: “Tell me about bringing a car on board.”</p><p>…let it get two seconds in…</p><p>You: “Actually — how long is the crossing?”</p></div>
+<div class="callout expect"><div class="callout-tag">✓  YOU SHOULD SEE</div><div class="callout-head">It stops within a beat, and answers the crossing time.</div><p>Console: <code>BARGE-IN</code>, then <code>HEARD</code> with your second question. If it keeps talking, <code>stopSpeaking()</code> is not reaching the player — check <code>player</code> is not declared inside <code>speak()</code>.</p></div>
+<div class="callout warn"><div class="callout-tag">⚠  WATCH OUT</div><div class="callout-head">This needs a headset. It is not optional here.</div><p>With open speakers the watcher hears the agent, counts two words, and interrupts itself — every single time. Lab 2 had the same symptom; here it is guaranteed.</p></div>
+<p>Notice what you just built by hand: a second recognizer, a word threshold, a pause and a hand-over. That is the part of the realtime model you did not have to write this morning — and it is still slower than the real thing.</p>
+<h2 id="your-acceptance-test-ten-utterances-out-loud">Your acceptance test — ten utterances, out loud<a class="anchor" href="#your-acceptance-test-ten-utterances-out-loud">¶</a></h2>
+<p>Headset on. Say them in order. The pack has the same ten; this is what each one is checking.</p>
+<div class="tablewrap"><table class="grid"><thead><tr><th>#</th><th>Say this out loud</th><th>It passes when…</th></tr></thead><tbody><tr><td>1</td><td><i>“What time is the morning ferry to Karlskrona?”</i></td><td>The baseline. One short spoken answer, the same text on screen.</td></tr><tr><td>2</td><td><i>“Tell me everything about travelling with a pet.”</i></td><td>A long answer. You hear two sentences and “the rest is on your screen”.</td></tr><tr><td>3</td><td><i>“Czy mogę zabrać psa na prom?”</i></td><td>Language detection. It hears Polish and answers in a Polish voice.</td></tr><tr><td>4</td><td><i>“How do I get to PPNT from Gdynia Główna?”</i></td><td>Place names. Check the HEARD line: Główna and PPNT are where transcription slips.</td></tr><tr><td>5</td><td><i>“My booking reference is A L six six two four.”</i></td><td>An identifier. Check HEARD — the agent cannot look it up, and should say so.</td></tr><tr><td>6</td><td><i>“I have a motorhome... it is about seven metres... is that a problem?”</i></td><td>Pauses. If it sends “I have a motorhome” on its own, your silence timeout is too short.</td></tr><tr><td>7</td><td><i>“Compare the cabin types for me.”</i></td><td>A table on screen. No pipes, no asterisks read aloud.</td></tr><tr><td>8</td><td><i>“Where can I read more about the pet rules?”</i></td><td>Links. No URL and no [1] read aloud.</td></tr><tr><td>9</td><td><i>“Tell me about bringing a car on board.”</i></td><td>Barge-in. Interrupt it after two seconds with number 10.</td></tr><tr><td>10</td><td><i>“Actually — how long is the crossing?”</i></td><td>The interruption. It stops, and answers this question instead.</td></tr></tbody></table></div>
+<p>Then the two questions pack E deliberately does not cover:</p>
+<ul class="chk"><li><i>“How much does a deluxe cabin cost in August?”</i></li><li><i>“Is there a swimming pool on board?”</i></li></ul>
+<div class="callout expect"><div class="callout-tag">✓  YOU SHOULD SEE</div><div class="callout-head">It declines, offers something adjacent, and asks a question back — in one spoken sentence or two.</div><p>If it invents an answer, go back to the “never invent” line in your instructions. If it declines correctly on screen but you hear something else, your <code>speakable()</code> cut it in the wrong place.</p></div>
+<ul class="chk"><li>I can type to my agent on my own page, and no secret is in the browser.</li><li>I press the mic, speak, and hear a short answer while the full one is on screen.</li><li>Polish in, Polish out — in a Polish voice.</li><li>No URL, asterisk or [1] is ever read aloud.</li><li>I can interrupt it, and it answers the interruption.</li><li>The page still works after twenty minutes idle.</li></ul>
+<h2 id="what-you-traded-for-a-web-channel">What you traded for a web channel<a class="anchor" href="#what-you-traded-for-a-web-channel">¶</a></h2>
+<div class="tablewrap"><table class="grid"><thead><tr><th></th><th>Labs 1–4 · gpt-realtime</th><th>Lab 6 · this pipeline</th></tr></thead><tbody><tr><td><b>Hops</b></td><td>One. Audio in, audio out</td><td>Three: speech to text, the agent, text to speech</td></tr><tr><td><b>Barge-in</b></td><td>The model is listening while it speaks</td><td>A second recognizer you run and tune yourself</td></tr><tr><td><b>Tone of voice</b></td><td>Heard by the model</td><td>Thrown away at the first hop</td></tr><tr><td><b>Language</b></td><td>The model follows the caller</td><td>You list up to four candidates</td></tr><tr><td><b>The agent</b></td><td>Instructions and tools in your code</td><td>Any Copilot Studio agent — knowledge, flows, connectors — unchanged</td></tr><tr><td><b>Voices</b></td><td>The realtime voice list</td><td>The Azure AI Speech neural voice catalogue, including Polish voices</td></tr><tr><td><b>Screen and voice together</b></td><td>Possible, but you build the screen</td><td>The natural shape: show everything, say the gist</td></tr><tr><td><b>Web channel status</b></td><td>Code you own</td><td>Direct Line to a standard agent — no preview feature involved</td></tr></tbody></table></div>
+<div class="callout note"><div class="callout-tag">ℹ  WHY THIS MATTERS</div><div class="callout-head">Neither column wins.</div><p>If the voice is the product, build Labs 1–4. If the agent already exists in Copilot Studio and the website is the product, build this — and say out loud that you chose the extra latency.</p></div>
+<h2 id="troubleshooting">Troubleshooting<a class="anchor" href="#troubleshooting">¶</a></h2>
+<div class="tablewrap"><table class="grid"><thead><tr><th>Symptom</th><th>Cause</th><th>Fix</th></tr></thead><tbody><tr><td>“DirectLine is not a constructor”</td><td>The bundle exposes a namespace</td><td><code>new DirectLine.DirectLine({ token })</code></td></tr><tr><td>Every message appears twice</td><td>Your own activities come back on <code>activity$</code></td><td>Skip <code>a.from.id === USER.id</code></td></tr><tr><td>“not connected”, with an orange line</td><td>The token route answered, badly</td><td>Read the line — it names the route, the code and the setting</td></tr><tr><td>Status stuck on “connecting”</td><td>WebSocket blocked on this network</td><td>Try <code>webSocket: false</code> to fall back to polling</td></tr><tr><td>No microphone prompt</td><td>The page is not on a secure origin</td><td>Use <code>localhost</code>, not your IP address</td></tr><tr><td>“did not catch that” straight away</td><td>Wrong input device, or initial silence ran out</td><td>Check the OS default input; speak within five seconds of the click</td></tr><tr><td>“voice stopped”, naming <code>SPEECH_KEY</code></td><td>The Speech token route refused</td><td>Key and region must come from the same Keys and Endpoint blade</td></tr><tr><td>Polish transcribed as nonsense English</td><td><code>pl-PL</code> missing from the candidates</td><td>Add it — four candidates at most</td></tr><tr><td>It sends half your sentence</td><td>Segmentation silence too short for you</td><td>Raise it in 200 ms steps</td></tr><tr><td>No audio at all</td><td>No user gesture yet, or the wrong output device</td><td>Start from the mic button; check the OS default output</td></tr><tr><td>It interrupts itself</td><td>Open speakers</td><td>Headset</td></tr><tr><td>Stops after about 10 minutes</td><td>Speech token expired and was not refreshed</td><td>Check <code>speechExpiry</code> is set from <code>expires_in</code></td></tr><tr><td>You hear “let me check”, <i>then</i> the answer</td><td>Two messages for one question</td><td>Working as built — the queue speaks both rather than losing the second</td></tr><tr><td>The answer is on screen but never spoken</td><td>It arrived long after the filler finished</td><td>Add “Answer in a single message” to the agent instructions</td></tr></tbody></table></div>
+<h2 id="finished-early-three-things-worth-doing">Finished early? Three things worth doing<a class="anchor" href="#finished-early-three-things-worth-doing">¶</a></h2>
+<div class="li"><b>Run the tests.</b> The finished repo carries a small suite that drives this page in a real browser against a fake Direct Line service and a fake Speech SDK — no agent, no key, no microphone. It is the only way to check the page still works on a Tuesday morning with no Azure in front of you. <code>npm install --prefix test &amp;&amp; npm test</code>.</div><div class="li"><b>Show what it hears as you speak.</b> Handle <code>recognizing</code> on the step 4 recognizer and write <code>e.result.text</code> into the text box. Visitors trust a transcript they can watch.</div>
+<div class="li"><b>Replace the two-sentence cut with a summary.</b> Send long replies to a small model in Foundry from a third server route and speak what comes back, with a timeout and a fallback line. The reference implementation below does exactly this.</div>
+<h2 id="sources">Sources<a class="anchor" href="#sources">¶</a></h2>
+<div class="tablewrap"><table class="grid"><thead><tr><th>Page</th><th>Link</th></tr></thead><tbody><tr><td>Configure web and Direct Line channel security</td><td><code>learn.microsoft.com/microsoft-copilot-studio/configure-web-security</code></td></tr><tr><td>How to recognize speech (timeouts)</td><td><code>learn.microsoft.com/azure/ai-services/speech-service/how-to-recognize-speech</code></td></tr><tr><td>Language identification</td><td><code>learn.microsoft.com/azure/ai-services/speech-service/language-identification</code></td></tr><tr><td>Authenticate requests to Azure AI services</td><td><code>learn.microsoft.com/azure/ai-services/authentication</code></td></tr><tr><td>Direct Line JavaScript SDK</td><td><code>github.com/microsoft/BotFramework-DirectLineJS</code></td></tr><tr><td>Finished code for this lab</td><td><code>github.com/david-lorenzo88/copilot-studio-web-voice</code></td></tr><tr><td>Fuller reference implementation — maps, Dataverse, Foundry summaries</td><td><code>github.com/david-lorenzo88/copilot-studio-travel-agent</code></td></tr></tbody></table></div>
+<div class="brandbar"><div class="bb-brand"><div class="brick"></div></div><div class="bb-mid"><div class="bb-name">Samir Makwana  ·  David Lorenzo López</div><div class="bb-links"><a href="https://www.linkedin.com/in/makwanasamir/">linkedin.com/in/makwanasamir</a>  ·  <a href="https://www.linkedin.com/in/davidlorenzolopez/">linkedin.com/in/davidlorenzolopez</a>  ·  <a href="https://cloudtrify.com">cloudtrify.com</a>  ·  info@cloudtrify.com</div><div class="bb-event">Baltic Summit 2026  ·  PPNT, Gdynia, Poland  ·  24 September 2026  ·  Room H</div></div></div>
+<div class="footer">Facts verified against Microsoft Learn in September 2026. Check each page's own date banner before quoting a limit inside your organisation.</div>
+</div><script>
+function _fb(t,d){var a=document.createElement('textarea');a.value=t;a.style.position='fixed';a.style.top='-1000px';document.body.appendChild(a);a.focus();a.select();try{document.execCommand('copy')}catch(e){}document.body.removeChild(a);d();}
+function copyBtn(b){var t=b.getAttribute('data-copy');var o=b.textContent;var d=function(){b.textContent='Copied ✓';b.classList.add('ok');setTimeout(function(){b.textContent=o;b.classList.remove('ok');},1400);};
+if(navigator.clipboard&&navigator.clipboard.writeText){navigator.clipboard.writeText(t).then(d).catch(function(){_fb(t,d);});}else{_fb(t,d);}}
+var tt=document.createElement('button');tt.className='totop';tt.innerHTML='↑';tt.onclick=function(){window.scrollTo({top:0,behavior:'smooth'});};document.body.appendChild(tt);
+window.addEventListener('scroll',function(){if(window.scrollY>500)tt.classList.add('show');else tt.classList.remove('show');});
+</script></body></html>

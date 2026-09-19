@@ -5,7 +5,14 @@ Samir Makwana · David Lorenzo López
 
 A Copilot Studio agent on your own web page over **Direct Line**, with **speech to text** and **text to speech** from **Azure AI Speech**, all in the browser. No framework and no build step.
 
-This is the finished code for Lab 6, the self-paced take-home. The lab guide (`06_Lab6_CopilotStudio_WebVoice.html`) walks through every line.
+This is the finished code for Lab 6, the self-paced take-home. **You are meant to type it out,**
+not clone it: the lab guide in this repo — [`06_Lab6_CopilotStudio_WebVoice.html`](06_Lab6_CopilotStudio_WebVoice.html)
+— prints every file in full, in the order you create them, each with a Copy button. This repo is
+the same code, for falling back on and for diffing against afterwards.
+
+The two cannot drift apart. `test/guide.test.mjs` pulls the listings out of that HTML and fails if
+any of them stops matching the file it builds — including pasting the seven `app.js` parts in
+order and comparing the result, byte for byte, with `app.js`.
 
 ---
 
@@ -33,6 +40,7 @@ Three hops: speech to text, the agent, text to speech. The audio never touches y
 
 | Path | What it is |
 |---|---|
+| `06_Lab6_CopilotStudio_WebVoice.html` | The lab guide. The source of truth — every file below is printed in it |
 | `index.html`, `style.css` | The page: a status line, a chat area, a text box and a mic button |
 | `app.js` | Everything the lab builds, in order: Direct Line chat → ears → mouth → speakable text → voice loop → barge-in |
 | `api/src/functions/tokens.js` | Two Azure Functions routes that swap your secrets for tokens |
@@ -167,24 +175,22 @@ two-message reply. Each case was checked to fail without the code that fixes it.
 
 ---
 
-## Where this differs from the lab guide listings
+## What changed after the first run-through
 
-The guide builds `app.js` in six printed pieces. This repo is those pieces plus
-the fixes below — each one for something the guide itself warns about in a WATCH
-OUT or a troubleshooting row. If you are reading the two side by side, this is
-the whole list of differences; everything else is line for line.
+The guide and this repo were rebuilt together around five failures, each one something the guide
+already warned about in a WATCH OUT or a troubleshooting row but that the code did not actually
+handle. Kept here because the reasoning is worth more than the diff.
 
-| Difference | Why |
+| What was wrong | Why it mattered |
 |---|---|
-| The Direct Line token fetch is wrapped, and the page reports the failure | In the printed version a failed token route throws out of the module's top-level `await`, so the page keeps saying "connecting…" and the mic and text box are never wired up. A wrong secret produced a page that did nothing, silently |
-| A second message is queued and spoken, not dropped | The guide's WATCH OUT: "the agent sometimes sends two messages for one question… if you hear the filler and never the answer". Queueing costs nothing on the usual single-message reply, where waiting for a settle window would delay every turn |
-| `speakable()` also strips a pipe left inline with prose | The line-based table strip only catches a row that starts and ends with `\|`. An agent that writes a table on the same line as its answer got the pipes read aloud |
-| A failed `/api/speech/token` reports itself | It surfaced as "did not catch that - press the mic", which sends you looking at the microphone when the problem is `SPEECH_KEY` |
-| The mic button says "Stop" while the loop runs | The loop is a toggle and the guide asks you to press it a second time. Nothing on the page said whether it was on |
-| The token routes check their settings before calling out | A missing `SPEECH_REGION` resolved `https://undefined.api.cognitive.microsoft.com` and surfaced as a bare 500 |
+| A failed `/api/directline/token` threw out of the module's top-level `await` | Module evaluation stopped there, so the mic button and the text box were never wired up. A wrong secret gave you a page stuck on "connecting…" that did nothing at all, silently. Every failure now names the setting behind it |
+| Only the first of two messages was spoken | Copilot Studio answers some questions with a filler and then the answer; the answer was never spoken, only shown. Later messages are queued and spoken in order — queueing costs nothing on the usual single-message reply, where a settle window would tax every turn |
+| A failed `/api/speech/token` said "did not catch that - press the mic" | It sent you to look at the microphone when the problem was `SPEECH_KEY` |
+| `speakable()` missed a pipe left inline with prose | The line-based table strip only catches a row that starts *and* ends with `\|` |
+| The token routes called out with undefined settings | A missing `SPEECH_REGION` resolved `https://undefined.api.cognitive.microsoft.com` and reached the browser as a bare 500 |
 
-None of this changes the shape of the lab, the build order, or anything an
-attendee types. `agent/instructions.txt` is unchanged from pack E.
+The mic button also reads **Stop** while the loop runs, because the loop is a toggle and nothing on
+the page said whether it was on.
 
 ## Before this goes anywhere public
 
